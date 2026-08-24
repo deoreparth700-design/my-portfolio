@@ -6,7 +6,7 @@ The portfolio features a space-inspired visual design with responsive layouts, a
 
 ## 🌐 Live Portfolio
 
-### [Visit My Portfolio](https://my-portfolio-kebv.vercel.app/)
+### [Visit My Portfolio](https://parthdeore.vercel.app/)
 
 ## 📌 Highlights
 
