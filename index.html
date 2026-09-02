@@ -465,13 +465,13 @@
         <div class="op-label">OPERATOR NAME</div>
         <h1 class="big-name">PARTH</h1>
         <div class="role-tag">Backend Developer <span style="color:var(--text-faint)">— in training</span><span class="role-cursor"></span></div>
-        <p class="desc">Final-year Computer Science Engineering student, architecting backend systems with Python, Django, and AI-driven automation. Contract before code — mission after mission.</p>
+        <p class="desc">Final-year Computer Science Engineering student, architecting backend systems with Python, FastAPI, and PostgreSQL, with AI-driven automation as a growing focus. Contract before code — mission after mission.</p>
         <div class="hero-actions">
           <a class="btn btn-fill" href="#transmission">INITIATE CONTACT</a>
           <a class="btn btn-line" href="#archive">VIEW ARCHIVE</a>
         </div>
         <div class="stat-row">
-          <div class="stat"><b>4+</b><span>PROJECTS SHIPPED</span></div>
+          <div class="stat"><b>2</b><span>PROJECTS SHIPPED</span></div>
           <div class="stat"><b>3</b><span>CERTIFICATIONS</span></div>
           <div class="stat"><b>10+</b><span>STACK SYSTEMS</span></div>
         </div>
@@ -512,7 +512,7 @@
         </div>
       </div>
       <div class="about-copy reveal">
-        <p>I'm a <strong>final-year Computer Science Engineering student</strong> focused on backend development — Python and Django as the core, FastAPI and AI-driven automation as the extension.</p>
+        <p>I'm a <strong>final-year Computer Science Engineering student</strong> focused on backend development — Python, FastAPI, and PostgreSQL as the core, Redis, Docker, and AI-driven automation as the extension.</p>
         <p>My approach is project-first: I design the data model and API contract before writing a single endpoint, and I document architecture — data flow diagrams, UML, ER diagrams — so the system is explainable, not just working.</p>
         <p>Studying roughly 1–2 hours daily on a structured roadmap toward production-grade backend engineering. Looking for a backend or full-stack internship where this foundation meets a real product.</p>
 
@@ -570,7 +570,7 @@
       <div class="m-pills">
         <span>+ DBMS Concepts</span><span>+ Operating Systems</span><span>+ Computer Networks</span>
         <span>+ DFD / UML / ER Docs</span><span>+ Problem Solving</span><span>+ Debugging</span>
-        <span>+ Analytical Thinking</span><span>+ Unity</span><span>+ Vuforia</span>
+        <span>+ Analytical Thinking</span>
       </div>
     </div>
   </div>
@@ -645,7 +645,6 @@
       <div class="tab active" data-pfilter="all">ALL</div>
       <div class="tab" data-pfilter="backend">BACKEND</div>
       <div class="tab" data-pfilter="fullstack">FULL STACK</div>
-      <div class="tab" data-pfilter="ar">AR / UNITY</div>
     </div>
 
     <div class="proj-grid" id="projGrid">
@@ -720,17 +719,16 @@
   /* ---------- data ---------- */
   const skills = [
     {name:'Python', cat:'LANGUAGES', tag:'lang', pct:85, color:'#E8B54D'},
-    {name:'C', cat:'LANGUAGES', tag:'lang', pct:45, color:'#A78BFA'},
-    {name:'Django', cat:'BACKEND', tag:'backend', pct:78, color:'#6BE38A'},
-    {name:'REST APIs', cat:'BACKEND', tag:'backend', pct:75, color:'#E8927D'},
-    {name:'FastAPI', cat:'BACKEND', tag:'backend', pct:45, color:'#A78BFA'},
-    {name:'PostgreSQL', cat:'DATABASES', tag:'db', pct:65, color:'#6BE38A'},
+    {name:'REST APIs', cat:'BACKEND', tag:'backend', pct:80, color:'#E8927D'},
+    {name:'FastAPI', cat:'BACKEND', tag:'backend', pct:70, color:'#A78BFA'},
+    {name:'PostgreSQL', cat:'DATABASES', tag:'db', pct:75, color:'#6BE38A'},
+    {name:'SQL', cat:'DATABASES', tag:'db', pct:75, color:'#A78BFA'},
+    {name:'Django', cat:'BACKEND', tag:'backend', pct:65, color:'#6BE38A'},
     {name:'MongoDB', cat:'DATABASES', tag:'db', pct:60, color:'#E8B54D'},
-    {name:'SQL', cat:'DATABASES', tag:'db', pct:70, color:'#A78BFA'},
-    {name:'Git', cat:'TOOLS', tag:'tools', pct:75, color:'#E8927D'},
-    {name:'GitHub', cat:'TOOLS', tag:'tools', pct:75, color:'#6BE38A'},
+    {name:'Git', cat:'TOOLS', tag:'tools', pct:80, color:'#E8927D'},
+    {name:'GitHub', cat:'TOOLS', tag:'tools', pct:80, color:'#6BE38A'},
     {name:'VS Code', cat:'TOOLS', tag:'tools', pct:90, color:'#E8B54D'},
-    {name:'Unity', cat:'TOOLS', tag:'tools', pct:50, color:'#A78BFA'},
+    {name:'C', cat:'LANGUAGES', tag:'lang', pct:45, color:'#A78BFA'}
   ];
   const skillGrid = document.getElementById('skillGrid');
   function renderSkills(filter){
@@ -756,12 +754,12 @@
   });
 
   const projects = [
-    {id:'PRJ-01', cat:'fullstack', catLabel:'Full Stack', featured:true, title:'Alumni Portal', desc:'Connecting alumni, students, and the college in one place — built for SOET with full architecture documentation (DFDs, UML, ER diagrams) before implementation.', tags:['React','Node.js','Express','MongoDB'], link:'https://github.com/deoreparth700-design'},
-    {id:'PRJ-02', cat:'backend', catLabel:'Backend', featured:true, title:'Task Manager API', desc:'A Django REST API with real authentication and relational data — built to go deep on backend fundamentals. In progress.', tags:['Django','SQL','REST API'], link:'https://github.com/deoreparth700-design'},
-    {id:'PRJ-03', cat:'backend', catLabel:'Backend', featured:false, title:'Auth Service', desc:'A standalone authentication service — token issuance, verification, and access control designed as a reusable backend building block.', tags:['Python','Auth','REST API'], link:'https://github.com/deoreparth700-design/auth-service'},
-    {id:'PRJ-04', cat:'backend', catLabel:'Backend', featured:false, title:'URL Shortener', desc:'A URL shortener API with click analytics — short link generation, redirection, and usage tracking.', tags:['Node.js','Express','PostgreSQL'], link:'https://github.com/deoreparth700-design/url-shortener'},
-    {id:'PRJ-05', cat:'ar', catLabel:'AR / Unity', featured:false, title:'AR Smart Cooking Assistant', desc:'Step-by-step cooking guidance overlaid on real ingredients using Unity and Vuforia — a hands-free, beginner-friendly AR experience.', tags:['Unity','Vuforia','AR'], link:'https://github.com/deoreparth700-design'},
-    {id:'PRJ-06', cat:'fullstack', catLabel:'Full Stack', featured:false, title:'This Portfolio', desc:'The site you\'re on — designed and built from scratch as a personal digital archive.', tags:['HTML','CSS','JavaScript'], link:'https://my-portfolio-kebv.vercel.app/'},
+    {id:'PRJ-01', cat:'fullstack', catLabel:'Full Stack', featured:true, title:'SOET Alumni Portal', desc:'Full-stack alumni management platform for SOET with structured architecture documentation including DFDs, UML use case diagrams, and ER diagrams before implementation.', tags:['React','Node.js','Express','MongoDB'], link:'https://github.com/deoreparth700-design'},
+    {id:'PRJ-02', cat:'backend', catLabel:'Backend', featured:true, title:'Authentication Service', desc:'Production-style authentication API built with FastAPI and PostgreSQL, featuring JWT access tokens, refresh tokens, password hashing, and rate limiting.', tags:['Python','FastAPI','PostgreSQL','JWT'], link:'https://github.com/deoreparth700-design/auth-service'},
+    {id:'PRJ-03', cat:'backend', catLabel:'Backend', featured:false, title:'URL Shortener', desc:'REST API for generating short URLs, redirecting users, and tracking click analytics with persistent PostgreSQL storage.', tags:['Node.js','Express','PostgreSQL','REST API'], link:'https://github.com/deoreparth700-design/url-shortener'},
+    {id:'PRJ-04', cat:'backend', catLabel:'Backend', featured:false, title:'Farm Expense Tracker', desc:'Python application for recording, managing, and tracking farm expenses with practical data management and CRUD operations.', tags:['Python','SQL','CRUD'], link:'https://github.com/deoreparth700-design'},
+    {id:'PRJ-05', cat:'fullstack', catLabel:'Full Stack', featured:false, title:'Electric Bike Rental System', desc:'System for managing electric bike rentals, customer records, bike availability, and rental operations.', tags:['Python','SQL','Database'], link:'https://github.com/deoreparth700-design'},
+    {id:'PRJ-06', cat:'backend', catLabel:'Backend', featured:false, title:'Student Record System', desc:'C++ based student record management system for storing, updating, searching, and managing student information.', tags:['C++','File Handling','CRUD'], link:'https://github.com/deoreparth700-design'}
   ];
   const projGrid = document.getElementById('projGrid');
   function renderProjects(filter){
@@ -817,7 +815,7 @@
     [{c:'p',t:'$ '},{c:'',t:'parth --identity'}],
     [],
     [{c:'p',t:'> '},{c:'',t:'role: '},{c:'k',t:'BACKEND_DEVELOPER'}],
-    [{c:'p',t:'> '},{c:'',t:'stack: '},{c:'k',t:'PYTHON · DJANGO · AI_AUTOMATION'}],
+    [{c:'p',t:'> '},{c:'',t:'stack: '},{c:'k',t:'PYTHON · FASTAPI · POSTGRESQL'}],
     [{c:'p',t:'> '},{c:'',t:'clearance: '},{c:'k',t:'FINAL_YEAR_CSE'}],
     [{c:'p',t:'> '},{c:'',t:'status: '},{c:'k',t:'OPEN_TO_INTERNSHIPS'}],
     [{c:'c',t:'// Mission ready. Awaiting deployment orders.'}],
