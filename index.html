@@ -334,10 +334,10 @@
     display:flex;flex-direction:column;justify-content:space-between;transition:all .3s var(--ease);
   }
   .proj-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.6);}
-  .proj-media-link{display:block;text-decoration:none;margin-bottom:18px;border-radius:8px;overflow:hidden;}
+  .proj-media-wrap{position:relative;margin-bottom:18px;border-radius:8px;overflow:hidden;cursor:pointer;}
   .proj-media{
-    position:relative;width:100%;aspect-ratio:16/9;background:#050608;border:1px solid var(--border);
-    border-radius:8px;overflow:hidden;transition:border-color .3s var(--ease);
+    position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0c10 0%,#0d111a 50%,#080a0e 100%);
+    border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .3s var(--ease);
   }
   .proj-card:hover .proj-media{border-color:rgba(6,182,212,.4);}
   .proj-img{
@@ -345,14 +345,43 @@
     transition:transform .4s var(--ease);
   }
   .proj-card:hover .proj-img{transform:scale(1.03);}
+  /* Placeholder for projects without images */
+  .proj-media-placeholder{
+    width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:20px;
+  }
+  .proj-media-placeholder .ph-icon{
+    font-size:32px;opacity:.6;
+  }
+  .proj-media-placeholder .ph-label{
+    font-family:var(--mono);font-size:11px;color:var(--text-faint);letter-spacing:.1em;text-align:center;
+  }
+  .proj-media-placeholder .ph-endpoints{
+    display:flex;flex-direction:column;gap:6px;width:100%;max-width:240px;
+  }
+  .proj-media-placeholder .ph-ep{
+    display:flex;align-items:center;gap:8px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.18);
+    border-radius:5px;padding:5px 10px;
+  }
+  .proj-media-placeholder .ph-method{
+    font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;
+    background:rgba(6,182,212,.2);color:var(--cyan);min-width:34px;text-align:center;
+  }
+  .proj-media-placeholder .ph-route{
+    font-family:var(--mono);font-size:10px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
   .proj-media-overlay{
-    position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;
-    justify-content:center;opacity:0;transition:opacity .25s var(--ease);backdrop-filter:blur(2px);
+    position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:8px;opacity:0;transition:opacity .25s var(--ease);backdrop-filter:blur(3px);
   }
   .proj-card:hover .proj-media-overlay{opacity:1;}
   .proj-media-overlay-btn{
     font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.05em;color:#000000;
-    background:var(--cyan);padding:6px 14px;border-radius:4px;box-shadow:0 0 14px rgba(6,182,212,.4);
+    background:var(--cyan);padding:8px 18px;border-radius:4px;box-shadow:0 0 18px rgba(6,182,212,.5);
+    display:flex;align-items:center;gap:7px;
+  }
+  .proj-media-overlay-sub{
+    font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.06em;
   }
   .proj-body{display:flex;flex-direction:column;flex:1;}
   .proj-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -376,16 +405,78 @@
   }
   .proj-tags span:hover{border-color:rgba(6,182,212,.5);color:#22D3EE;}
   .proj-foot{border-top:1px solid var(--border);padding-top:16px;margin-top:auto;}
-  .proj-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .proj-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
   .proj-action-btn{
-    font-family:var(--mono);font-size:11.5px;font-weight:500;padding:7px 14px;border-radius:6px;
-    display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:all .2s var(--ease);letter-spacing:.02em;
+    font-family:var(--mono);font-size:11px;font-weight:500;padding:7px 13px;border-radius:6px;
+    display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:all .2s var(--ease);letter-spacing:.02em;
   }
   .proj-action-gh{color:var(--text);background:var(--surface-solid);border:1px solid var(--border);}
   .proj-action-gh:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,.06);}
   .proj-action-live{color:#000000;background:var(--cyan);border:1px solid var(--cyan);font-weight:600;}
   .proj-action-live:hover{background:#22D3EE;border-color:#22D3EE;box-shadow:0 0 14px rgba(6,182,212,.4);transform:translateY(-1px);}
+  .proj-action-preview{color:var(--text-dim);background:var(--surface-solid);border:1px solid var(--border);}
+  .proj-action-preview:hover{border-color:var(--purple);color:var(--purple);background:rgba(168,85,247,.06);}
   .live-dot{width:6px;height:6px;border-radius:50%;background:#000000;display:inline-block;box-shadow:0 0 0 2px rgba(0,0,0,0.15);}
+
+  /* ---------- PROJECT PREVIEW MODAL ---------- */
+  #projModal{
+    position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.88);backdrop-filter:blur(8px);
+    opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+  }
+  #projModal.open{opacity:1;pointer-events:auto;}
+  .pm-inner{
+    position:relative;width:min(900px,94vw);max-height:88vh;overflow-y:auto;
+    background:var(--surface-solid);border:1px solid var(--border-hover);
+    border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 0 1px rgba(6,182,212,.12);
+    transform:translateY(20px) scale(.97);transition:transform .35s var(--ease);
+  }
+  #projModal.open .pm-inner{transform:translateY(0) scale(1);}
+  .pm-close{
+    position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;
+    padding:14px 16px;background:var(--surface-solid);
+  }
+  .pm-close-btn{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--border-hover);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    color:var(--text-dim);transition:all .2s var(--ease);cursor:pointer;background:none;
+  }
+  .pm-close-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,.08);}
+  .pm-img-wrap{
+    width:100%;aspect-ratio:16/9;background:#050608;overflow:hidden;
+    border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  }
+  .pm-img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+  .pm-img-ph{
+    width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;background:linear-gradient(135deg,#0a0c10,#0d111a,#080a0e);
+  }
+  .pm-img-ph .ph-icon{font-size:48px;opacity:.5;}
+  .pm-img-ph .ph-label{font-family:var(--mono);font-size:12px;color:var(--text-faint);letter-spacing:.12em;}
+  .pm-body{padding:28px 30px 30px;}
+  .pm-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .pm-id{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.06em;}
+  .pm-badges{display:flex;gap:8px;}
+  .pm-title{font-family:var(--display);font-weight:800;font-size:clamp(22px,3vw,28px);line-height:1.2;margin-bottom:12px;}
+  .pm-desc{color:var(--text-dim);font-size:15px;line-height:1.6;margin-bottom:20px;}
+  .pm-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px;}
+  .pm-tags span{
+    font-family:var(--mono);font-size:11px;color:#D1D5DB;background:rgba(31,41,55,.5);
+    border:1px solid rgba(55,65,81,.6);padding:5px 10px;border-radius:5px;
+  }
+  .pm-actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .pm-action-btn{
+    font-family:var(--mono);font-size:12px;font-weight:500;padding:10px 20px;border-radius:7px;
+    display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:all .2s var(--ease);
+  }
+  .pm-action-gh{color:var(--text);border:1px solid var(--border-hover);background:rgba(255,255,255,.04);}
+  .pm-action-gh:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,.07);}
+  .pm-action-live{color:#000000;background:var(--cyan);border:1px solid var(--cyan);font-weight:600;}
+  .pm-action-live:hover{background:#22D3EE;box-shadow:0 0 18px rgba(6,182,212,.45);transform:translateY(-1px);}
+  @media (max-width:600px){
+    .pm-body{padding:20px 18px 22px;}
+    .pm-inner{border-radius:12px;}
+  }
 
   /* ---------- TRANSMISSION ---------- */
   .contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:36px;align-items:start;}
@@ -542,7 +633,7 @@
           <a class="btn btn-line" href="#archive">VIEW ARCHIVE</a>
         </div>
         <div class="stat-row">
-          <div class="stat"><b>2</b><span>PROJECTS SHIPPED</span></div>
+          <div class="stat"><b>4</b><span>PROJECTS SHIPPED</span></div>
           <div class="stat"><b>3</b><span>CERTIFICATIONS</span></div>
           <div class="stat"><b>10+</b><span>STACK SYSTEMS</span></div>
         </div>
@@ -769,6 +860,41 @@
   </div>
 </section>
 
+<!-- PROJECT PREVIEW MODAL -->
+<div id="projModal" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+  <div class="pm-inner">
+    <div class="pm-close">
+      <button class="pm-close-btn" id="pmCloseBtn" aria-label="Close preview">✕</button>
+    </div>
+    <div class="pm-img-wrap">
+      <img id="pmImg" class="pm-img" src="" alt="" style="display:none">
+      <div id="pmImgPh" class="pm-img-ph" style="display:none">
+        <div class="ph-icon">🖥</div>
+        <div class="ph-label">NO SCREENSHOT AVAILABLE</div>
+      </div>
+    </div>
+    <div class="pm-body">
+      <div class="pm-meta">
+        <span id="pmId" class="pm-id"></span>
+        <div id="pmBadges" class="pm-badges"></div>
+      </div>
+      <h2 id="pmTitle" class="pm-title"></h2>
+      <p id="pmDesc" class="pm-desc"></p>
+      <div id="pmTags" class="pm-tags"></div>
+      <div class="pm-actions">
+        <a id="pmGhBtn" class="pm-action-btn pm-action-gh" href="#" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          View on GitHub ↗
+        </a>
+        <a id="pmLiveBtn" class="pm-action-btn pm-action-live" href="#" target="_blank" rel="noopener noreferrer" style="display:none">
+          <span class="live-dot"></span>
+          Open Live Demo ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="wrap">
     <div class="foot-row">
@@ -831,12 +957,12 @@
       catLabel: 'Full Stack',
       featured: true,
       title: 'SOET Connect',
-      desc: 'Full-stack alumni management platform for SOET with structured architecture documentation including DFDs, UML use case diagrams, and ER diagrams before implementation.',
+      desc: 'Full-stack alumni management portal for SOET — connect with alumni, apply for roles, and join events. Built with React, Node.js, Express, and MongoDB, with full architecture documentation (DFDs, UML, ER diagrams) done first.',
       tags: ['React', 'Node.js', 'Express', 'MongoDB'],
       github: 'https://github.com/rohan26-bit/SOET-Connect',
       live: 'https://soet-connect-ut5i.vercel.app/',
       image: 'assets/screenshots/soet-connect.png',
-      alt: 'SOET Connect alumni network platform preview screenshot'
+      alt: 'SOET Connect alumni network platform landing page with hero section and call-to-action buttons'
     },
     {
       id: 'PRJ-02',
@@ -844,12 +970,12 @@
       catLabel: 'Backend',
       featured: true,
       title: 'Authentication Service',
-      desc: 'Production-style authentication API built with FastAPI and PostgreSQL, featuring JWT access tokens, refresh tokens, password hashing, and rate limiting.',
-      tags: ['Python', 'FastAPI', 'PostgreSQL', 'JWT'],
+      desc: 'Production-style authentication API built with FastAPI and PostgreSQL. Features JWT access/refresh tokens, bcrypt password hashing, rate limiting, and a deployed sign-in frontend.',
+      tags: ['Python', 'FastAPI', 'PostgreSQL', 'JWT', 'bcrypt'],
       github: 'https://github.com/deoreparth700-design/auth-service',
       live: 'https://auth-service-17bm.onrender.com/',
       image: 'assets/screenshots/auth-service.png',
-      alt: 'Authentication Service FastAPI JWT sign-in interface preview screenshot'
+      alt: 'Authentication Service sign-in form with email and password fields on dark background'
     },
     {
       id: 'PRJ-03',
@@ -857,12 +983,12 @@
       catLabel: 'Full Stack',
       featured: false,
       title: 'Blockchain-Based Secure Online Examination System',
-      desc: 'A secure online examination system built with Python, Flask, and PostgreSQL, using blockchain-based records to support exam integrity and verification.',
-      tags: ['Python', 'Flask', 'PostgreSQL', 'Blockchain'],
+      desc: 'MGM University B.E. Final Year Examination Platform — a secure, tamper-evident exam portal using blockchain records for integrity verification, automated objective evaluation, and result archival.',
+      tags: ['Python', 'Flask', 'PostgreSQL', 'Blockchain', 'Vercel'],
       github: 'https://github.com/deoreparth700-design/Blockchain-Based-Secure-Online-Examination-System',
       live: 'https://blockchain-based-secure-online-exam.vercel.app/',
       image: 'assets/screenshots/blockchain-exam.png',
-      alt: 'Blockchain-Based Secure Online Examination System portal preview screenshot'
+      alt: 'MGM University blockchain exam portal home page with student login and registration'
     },
     {
       id: 'PRJ-04',
@@ -870,33 +996,89 @@
       catLabel: 'Backend',
       featured: false,
       title: 'Blog Platform API',
-      desc: 'A RESTful backend API for blog posts, comments, and likes, built with FastAPI and PostgreSQL, featuring response caching and automated tests.',
-      tags: ['Python', 'FastAPI', 'PostgreSQL', 'REST API', 'Caching', 'Pytest'],
+      desc: 'A RESTful backend API for blog posts, comments, and likes, built with FastAPI and PostgreSQL (Neon), featuring Redis response caching, JWT auth, and automated Pytest tests.',
+      tags: ['Python', 'FastAPI', 'PostgreSQL', 'Redis', 'JWT', 'Pytest'],
       github: 'https://github.com/deoreparth700-design/blog-platform-api',
-      live: 'https://blog-platform-api-db7a.onrender.com/app?utm_source',
-      image: null,
-      alt: 'Blog Platform API backend architecture'
+      live: 'https://blog-platform-api-db7a.onrender.com/app',
+      image: 'assets/screenshots/blog-platform-api.jpg',
+      alt: 'Blog Platform API web application showing article feed with FastAPI backend'
     }
   ];
   const projGrid = document.getElementById('projGrid');
+
+  /* ---------- project preview modal ---------- */
+  const modal = document.getElementById('projModal');
+  const pmImg = document.getElementById('pmImg');
+  const pmImgPh = document.getElementById('pmImgPh');
+  const pmId = document.getElementById('pmId');
+  const pmTitle = document.getElementById('pmTitle');
+  const pmDesc = document.getElementById('pmDesc');
+  const pmTags = document.getElementById('pmTags');
+  const pmGhBtn = document.getElementById('pmGhBtn');
+  const pmLiveBtn = document.getElementById('pmLiveBtn');
+  const pmBadges = document.getElementById('pmBadges');
+
+  function openModal(p){
+    if(p.image){
+      pmImg.src = p.image; pmImg.alt = p.alt;
+      pmImg.style.display='block'; pmImgPh.style.display='none';
+    } else {
+      pmImg.style.display='none'; pmImgPh.style.display='flex';
+    }
+    pmId.textContent = p.id;
+    pmTitle.textContent = p.title;
+    pmDesc.textContent = p.desc;
+    pmTags.innerHTML = p.tags.map(t=>`<span>${t}</span>`).join('');
+    pmBadges.innerHTML = (p.featured ? '<span class="featured">FEATURED</span>' : '') + `<span class="proj-cat-tag">${p.catLabel}</span>`;
+    pmGhBtn.href = p.github;
+    if(p.live){ pmLiveBtn.href=p.live; pmLiveBtn.style.display='inline-flex'; }
+    else { pmLiveBtn.style.display='none'; }
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+    modal.querySelector('.pm-close-btn').focus();
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+  document.getElementById('pmCloseBtn').addEventListener('click', closeModal);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('open')) closeModal(); });
+
   function renderProjects(filter){
     projGrid.innerHTML = '';
     projects.filter(p => filter==='all' || p.cat===filter).forEach(p => {
       const el = document.createElement('div');
       el.className = 'proj-card reveal in';
 
-      const mediaHtml = p.image ? `
-        <a class="proj-media-link" href="${p.live || p.github}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.title}">
-          <div class="proj-media">
-            <img src="${p.image}" alt="${p.alt}" class="proj-img" loading="lazy">
-            <div class="proj-media-overlay">
-              <span class="proj-media-overlay-btn">${p.live ? 'LIVE DEMO ↗' : 'VIEW GITHUB ↗'}</span>
-            </div>
+      /* Build media section */
+      let mediaInner;
+      if(p.image){
+        mediaInner = `
+          <img src="${p.image}" alt="${p.alt}" class="proj-img" loading="lazy">
+          <div class="proj-media-overlay" aria-hidden="true">
+            <span class="proj-media-overlay-btn">👁 PREVIEW</span>
+            <span class="proj-media-overlay-sub">Click to enlarge</span>
+          </div>`;
+      } else {
+        /* Backend API placeholder with endpoint list */
+        const endpoints = p.endpoints || [];
+        const epHtml = endpoints.length ? `<div class="ph-endpoints">${endpoints.map(e=>`<div class="ph-ep"><span class="ph-method">${e.m}</span><span class="ph-route">${e.r}</span></div>`).join('')}</div>` : '';
+        mediaInner = `
+          <div class="proj-media-placeholder">
+            <div class="ph-icon">${p.icon||'⚙'}</div>
+            ${epHtml}
+            <div class="ph-label">${p.previewLabel||'API ARCHITECTURE'}</div>
           </div>
-        </a>` : '';
+          <div class="proj-media-overlay" aria-hidden="true">
+            <span class="proj-media-overlay-btn">👁 PREVIEW</span>
+          </div>`;
+      }
 
       el.innerHTML = `
-        ${mediaHtml}
+        <div class="proj-media-wrap" role="button" tabindex="0" aria-label="Preview ${p.title}" data-proj-id="${p.id}">
+          <div class="proj-media">${mediaInner}</div>
+        </div>
         <div class="proj-body">
           <div class="proj-top">
             <span class="proj-id">${p.id}</span>
@@ -911,19 +1093,32 @@
         </div>
         <div class="proj-foot">
           <div class="proj-actions">
+            <button class="proj-action-btn proj-action-preview" aria-label="Preview ${p.title}" data-proj-id="${p.id}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>
+              Preview
+            </button>
             <a class="proj-action-btn proj-action-gh" href="${p.github}" target="_blank" rel="noopener noreferrer" aria-label="${p.title} source on GitHub">
               <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-              <span>GitHub ↗</span>
+              GitHub ↗
             </a>
             ${p.live ? `
             <a class="proj-action-btn proj-action-live" href="${p.live}" target="_blank" rel="noopener noreferrer" aria-label="${p.title} Live Demo">
               <span class="live-dot"></span>
-              <span>Live Demo ↗</span>
+              Live Demo ↗
             </a>` : ''}
           </div>
         </div>
       `;
       projGrid.appendChild(el);
+    });
+
+    /* Attach event listeners to preview triggers */
+    projGrid.querySelectorAll('[data-proj-id]').forEach(trigger => {
+      const projId = trigger.dataset.projId;
+      const proj = projects.find(p=>p.id===projId);
+      if(!proj) return;
+      trigger.addEventListener('click', ()=>openModal(proj));
+      trigger.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openModal(proj); }});
     });
   }
   renderProjects('all');
@@ -1056,6 +1251,17 @@
     document.querySelectorAll('a,button,.tab,.route-item,input,textarea').forEach(el=>{
       el.addEventListener('mouseenter', ()=>cring.classList.add('grow'));
       el.addEventListener('mouseleave', ()=>cring.classList.remove('grow'));
+    });
+    /* Event delegation for dynamically rendered project preview elements */
+    document.addEventListener('mouseover', e=>{
+      if(e.target.closest('[data-proj-id],.proj-media-wrap,.pm-close-btn,.pm-action-btn,.proj-action-preview')){
+        cring.classList.add('grow');
+      }
+    });
+    document.addEventListener('mouseout', e=>{
+      if(e.target.closest('[data-proj-id],.proj-media-wrap,.pm-close-btn,.pm-action-btn,.proj-action-preview')){
+        cring.classList.remove('grow');
+      }
     });
   } else { cdot.style.display='none'; cring.style.display='none'; }
 
