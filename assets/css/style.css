@@ -1466,9 +1466,9 @@ a {
   align-items: center;
   position: relative;
   width: 100%;
-  max-width: 960px;
-  height: 600px;
-  margin: 2rem auto 0 auto;
+  max-width: 620px;
+  height: 620px;
+  margin: 1.5rem auto 0 auto;
   user-select: none;
   touch-action: pan-y;
   cursor: grab;
@@ -1478,13 +1478,12 @@ a {
   cursor: grabbing;
 }
 
-/* Wireframe Sphere Mesh / 3D Canvas (Screenshot 40) */
+/* Wireframe Sphere Mesh / 3D Canvas (True 1:1 Globe Circle) */
 .sphere-wireframe-svg-wrap {
   position: absolute;
-  width: 560px;
-  height: 560px;
-  max-width: 95vw;
-  max-height: 95vw;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1493,19 +1492,19 @@ a {
 }
 
 .skills-globe-canvas {
-  width: 560px;
-  height: 560px;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   display: block;
   pointer-events: none;
-  filter: drop-shadow(0 0 45px rgba(168, 85, 247, 0.22));
+  filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.3));
 }
 
-/* 3D Orbit Layer holding the floating badges */
+/* 3D Orbit Layer holding the floating badges (1:1 with canvas) */
 .skills-3d-orbit-layer {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 2;
   pointer-events: none;
   overflow: visible;
@@ -2191,16 +2190,11 @@ a {
   .contact-form-box {
     padding: 1.5rem;
   }
-  .sphere-wireframe-svg-wrap {
-    width: 360px;
-    height: 360px;
-  }
-  .skills-globe-canvas {
-    width: 360px;
-    height: 360px;
-  }
   .skills-sphere-container {
-    height: 450px;
+    width: 92vw;
+    height: 92vw;
+    max-width: 420px;
+    max-height: 420px;
   }
   .floating-tech-badge {
     padding: 0.45rem 0.9rem;

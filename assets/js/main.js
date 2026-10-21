@@ -21,12 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
       type: 'BACKEND REST API',
       title: 'Cart API',
       colorClass: 'frame-amber',
-      leadDesc: 'High-performance shopping cart REST API with JWT authentication, atomic inventory transactions, and Razorpay webhook verification with idempotency protection.',
+      leadDesc: 'Live e-commerce cart platform with real-time inventory management, atomic PostgreSQL transactions, and secure Razorpay payment gateway integration with HMAC webhook verification.',
       tags: ['Python', 'FastAPI', 'PostgreSQL', 'JWT', 'Razorpay', 'SQLAlchemy'],
       github: 'https://github.com/deoreparth700-design/Cart-API',
       live: 'https://cart-api-m4g4.onrender.com/static/index.html',
-      image: 'assets/screenshots/cart-api-docs.png',
-      alt: 'Cart API interactive OpenAPI Swagger documentation'
+      image: 'assets/screenshots/cart-api-cart.png',
+      alt: 'Cart API live storefront web application with active product catalog and Razorpay checkout'
     },
     {
       id: 'auth-service',
@@ -419,33 +419,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const badges = Array.from(orbitLayer.querySelectorAll('.floating-tech-badge'));
     if (!badges.length) return;
 
-    let width = container.clientWidth;
-    let height = container.clientHeight;
-    let cx = width / 2;
-    let cy = height / 2;
-    let radius = Math.min(220, width * 0.28);
+    let width = 600;
+    let height = 600;
+    let cx = 300;
+    let cy = 300;
+    let radius = 220;
 
     function resizeGlobe() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = container.clientWidth;
-      height = container.clientHeight;
+      const rect = container.getBoundingClientRect();
+      width = rect.width || 600;
+      height = rect.height || 600;
       cx = width / 2;
       cy = height / 2;
-      radius = Math.max(125, Math.min(225, width * 0.28));
+      // Proportioned globe radius: 36% of the container diameter
+      radius = Math.min(width, height) * 0.36;
 
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     resizeGlobe();
     window.addEventListener('resize', resizeGlobe, { passive: true });
 
-    // Distribute skills in 3D around sphere using Fibonacci golden spiral
+    // Distribute skills evenly in 3D around sphere using Fibonacci golden spiral
     const N = badges.length;
     const skills3D = [];
     for (let i = 0; i < N; i++) {
-      // Inset from extreme poles so badges stay fully readable
+      // Inset from extreme poles so badges stay fully readable and orbiting
       const y = 1 - ((i + 0.6) / (N + 0.2)) * 2;
       const rAtY = Math.sqrt(Math.max(0, 1 - y * y));
       const phi = i * 2.3999632;
@@ -457,8 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Additional wireframe coordinate nodes for atmospheric celestial look
-    const nodeCount = 36;
+    // Dense surface constellation nodes for glowing globe tech aesthetic
+    const nodeCount = 52;
     const wireframeNodes = [];
     for (let i = 0; i < nodeCount; i++) {
       const y = 1 - (i / (nodeCount - 1)) * 2;
@@ -471,12 +473,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    let rotX = -0.16;
+    let rotX = -0.15;
     let rotY = 0.35;
-    let targetRotX = -0.16;
+    let targetRotX = -0.15;
     let targetRotY = 0.35;
     let autoSpin = 0;
-    let autoSpinSpeed = 0.0018; // Slow floating rotation
+    const autoSpinSpeed = 0.0016; // Elegant slow floating rotation
     let isHovered = false;
 
     // Slow down rotation when reading or hovering over a badge
@@ -490,8 +492,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll listener rotates the globe smoothly
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      targetRotY = scrollY * 0.0028;
-      targetRotX = -0.16 + Math.sin(scrollY * 0.0014) * 0.28;
+      targetRotY = scrollY * 0.0026;
+      targetRotX = -0.15 + Math.sin(scrollY * 0.0014) * 0.25;
     }, { passive: true });
 
     // Interactive Drag to Spin (Mouse & Touch)
@@ -522,17 +524,17 @@ document.addEventListener('DOMContentLoaded', () => {
         startX = clientX;
         startY = clientY;
 
-        velY = dx * 0.0045;
-        velX = -dy * 0.0045;
+        velY = dx * 0.0042;
+        velX = -dy * 0.0042;
         targetRotY += velY;
         targetRotX += velX;
       } else {
-        // Faint mouse parallax tilt
+        // Subtle mouse parallax tilt
         const rect = container.getBoundingClientRect();
         const normX = (clientX - rect.left) / rect.width - 0.5;
         const normY = (clientY - rect.top) / rect.height - 0.5;
-        targetRotY += normX * 0.0008;
-        targetRotX += normY * 0.0006;
+        targetRotY += normX * 0.0006;
+        targetRotX += normY * 0.0005;
       }
     }
 
@@ -554,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function render3DGlobe() {
       // Apply momentum decay or slow continuous auto-floating
       if (!isDragging) {
-        const currentSpeed = isHovered ? 0.0005 : autoSpinSpeed;
+        const currentSpeed = isHovered ? 0.0004 : autoSpinSpeed;
         autoSpin += currentSpeed;
         velX *= 0.92;
         velY *= 0.92;
@@ -568,30 +570,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Atmospheric radial glow behind the globe
-      const glow = ctx.createRadialGradient(cx, cy, 20, cx, cy, radius * 1.18);
-      glow.addColorStop(0, 'rgba(124, 58, 237, 0.16)');
-      glow.addColorStop(0.5, 'rgba(168, 85, 247, 0.06)');
-      glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = glow;
+      // 1. Ethereal Ambient Halo around globe circle
+      const aura = ctx.createRadialGradient(cx, cy, radius * 0.82, cx, cy, radius * 1.25);
+      aura.addColorStop(0, 'rgba(168, 85, 247, 0.22)');
+      aura.addColorStop(0.5, 'rgba(236, 72, 153, 0.09)');
+      aura.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = aura;
       ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.15, 0, Math.PI * 2);
+      ctx.arc(cx, cy, radius * 1.25, 0, Math.PI * 2);
       ctx.fill();
 
-      // Outer rim circle
-      ctx.strokeStyle = 'rgba(196, 181, 253, 0.45)';
-      ctx.lineWidth = 1.2;
+      // 2. Translucent Glass Sphere Body
+      const sphereGrad = ctx.createRadialGradient(cx - radius * 0.25, cy - radius * 0.25, radius * 0.06, cx, cy, radius);
+      sphereGrad.addColorStop(0, 'rgba(255, 255, 255, 0.92)');
+      sphereGrad.addColorStop(0.35, 'rgba(245, 243, 255, 0.6)');
+      sphereGrad.addColorStop(0.7, 'rgba(237, 233, 254, 0.32)');
+      sphereGrad.addColorStop(1, 'rgba(224, 231, 255, 0.15)');
+      ctx.fillStyle = sphereGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 3. Crisp Double Outer Globe Rim Circle
+      ctx.strokeStyle = 'rgba(147, 51, 234, 0.65)';
+      ctx.lineWidth = 1.8;
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Inner faint reference orbit circle
-      ctx.strokeStyle = 'rgba(196, 181, 253, 0.18)';
-      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(236, 72, 153, 0.32)';
+      ctx.lineWidth = 1.0;
       ctx.beginPath();
-      ctx.arc(cx, cy, radius * 0.62, 0, Math.PI * 2);
+      ctx.arc(cx, cy, radius - 2.5, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.setLineDash([]);
 
       const cosY = Math.cos(rotY);
       const sinY = Math.sin(rotY);
@@ -599,10 +610,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const sinX = Math.sin(rotX);
 
       function project3D(x, y, z) {
-        // Rotate Y
+        // Rotate around Y axis
         const x1 = x * cosY + z * sinY;
         const z1 = -x * sinY + z * cosY;
-        // Rotate X
+        // Rotate around X axis
         const y2 = y * cosX - z1 * sinX;
         const z2 = y * sinX + z1 * cosX;
 
@@ -616,104 +627,150 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       }
 
-      // Draw 3D Latitude Rings
+      // 4. Draw 3D Latitude Rings with True Depth Shading
       for (let i = 1; i < rings; i++) {
+        const isEquator = (i === Math.floor(rings / 2));
         const lat = (i / rings - 0.5) * Math.PI;
         const rLat = radius * Math.cos(lat);
         const yLat = radius * Math.sin(lat);
         const steps = 44;
 
-        ctx.beginPath();
-        let first = true;
-        for (let j = 0; j <= steps; j++) {
-          const lon = (j / steps) * Math.PI * 2;
-          const px = rLat * Math.cos(lon);
-          const pz = rLat * Math.sin(lon);
-          const pt = project3D(px, yLat, pz);
+        for (let j = 0; j < steps; j++) {
+          const lon1 = (j / steps) * Math.PI * 2;
+          const lon2 = ((j + 1) / steps) * Math.PI * 2;
 
-          if (first) {
-            ctx.moveTo(pt.x, pt.y);
-            first = false;
+          const pt1 = project3D(rLat * Math.cos(lon1), yLat, rLat * Math.sin(lon1));
+          const pt2 = project3D(rLat * Math.cos(lon2), yLat, rLat * Math.sin(lon2));
+
+          const avgZ = (pt1.z + pt2.z) / 2;
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+
+          if (avgZ < 0) {
+            // Back hemisphere
+            ctx.strokeStyle = 'rgba(196, 181, 253, 0.16)';
+            ctx.lineWidth = 0.75;
           } else {
-            ctx.lineTo(pt.x, pt.y);
+            // Front hemisphere: luminous gradient with equator highlight
+            const depthFactor = avgZ / radius;
+            const alpha = Math.min(0.72, 0.28 + depthFactor * 0.44);
+            if (isEquator) {
+              ctx.strokeStyle = `rgba(236, 72, 153, ${alpha.toFixed(2)})`;
+              ctx.lineWidth = 1.6;
+            } else {
+              ctx.strokeStyle = `rgba(124, 58, 237, ${alpha.toFixed(2)})`;
+              ctx.lineWidth = 1.1;
+            }
           }
+          ctx.stroke();
         }
-        ctx.strokeStyle = 'rgba(196, 181, 253, 0.28)';
-        ctx.lineWidth = 0.85;
-        ctx.stroke();
       }
 
-      // Draw 3D Longitude Meridians
+      // 5. Draw 3D Longitude Meridians with True Depth Shading
       for (let i = 0; i < meridians; i++) {
         const lon = (i / meridians) * Math.PI;
         const steps = 44;
 
-        ctx.beginPath();
-        let first = true;
-        for (let j = 0; j <= steps; j++) {
-          const lat = (j / steps) * Math.PI * 2;
-          const px = radius * Math.sin(lat) * Math.cos(lon);
-          const py = radius * Math.cos(lat);
-          const pz = radius * Math.sin(lat) * Math.sin(lon);
-          const pt = project3D(px, py, pz);
+        for (let j = 0; j < steps; j++) {
+          const lat1 = (j / steps) * Math.PI * 2;
+          const lat2 = ((j + 1) / steps) * Math.PI * 2;
 
-          if (first) {
-            ctx.moveTo(pt.x, pt.y);
-            first = false;
+          const px1 = radius * Math.sin(lat1) * Math.cos(lon);
+          const py1 = radius * Math.cos(lat1);
+          const pz1 = radius * Math.sin(lat1) * Math.sin(lon);
+
+          const px2 = radius * Math.sin(lat2) * Math.cos(lon);
+          const py2 = radius * Math.cos(lat2);
+          const pz2 = radius * Math.sin(lat2) * Math.sin(lon);
+
+          const pt1 = project3D(px1, py1, pz1);
+          const pt2 = project3D(px2, py2, pz2);
+
+          const avgZ = (pt1.z + pt2.z) / 2;
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+
+          if (avgZ < 0) {
+            ctx.strokeStyle = 'rgba(196, 181, 253, 0.14)';
+            ctx.lineWidth = 0.7;
           } else {
-            ctx.lineTo(pt.x, pt.y);
+            const depthFactor = avgZ / radius;
+            const alpha = Math.min(0.68, 0.24 + depthFactor * 0.42);
+            ctx.strokeStyle = `rgba(139, 92, 246, ${alpha.toFixed(2)})`;
+            ctx.lineWidth = 1.0;
           }
+          ctx.stroke();
         }
-        ctx.strokeStyle = 'rgba(196, 181, 253, 0.28)';
-        ctx.lineWidth = 0.85;
-        ctx.stroke();
       }
 
-      // Draw Celestial Coordinate Nodes
+      // 6. Draw Surface Constellation Coordinate Nodes
       for (let i = 0; i < wireframeNodes.length; i++) {
         const n = wireframeNodes[i];
         const pt = project3D(n.nx * radius, n.ny * radius, n.nz * radius);
         const depth = (pt.z + radius) / (radius * 2);
-        const alpha = Math.max(0.12, Math.min(0.85, depth * 0.9));
+        const clampedDepth = Math.max(0, Math.min(1, depth));
 
-        ctx.fillStyle = `rgba(124, 58, 237, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, Math.max(1.4, 2.6 * depth), 0, Math.PI * 2);
-        ctx.fill();
+        if (pt.z > 0) {
+          // Front glowing node
+          ctx.fillStyle = `rgba(124, 58, 237, ${(clampedDepth * 0.85).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, Math.max(1.8, 3.2 * clampedDepth), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = `rgba(236, 72, 153, ${(clampedDepth * 0.45).toFixed(2)})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, Math.max(3.2, 5.5 * clampedDepth), 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          // Back faint node
+          ctx.fillStyle = 'rgba(196, 181, 253, 0.18)';
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
-      // Update 3D Positions of the Floating Skill Badges
-      // Badges float on the outer surface (radius * 1.05)
-      const orbitRadius = radius * 1.04;
+      // 7. Update 3D Positions & Anchor Beacons of Floating Skill Badges
+      // Badges orbit directly around the surface of the globe circle
+      const orbitRadius = radius * 1.07;
       for (let i = 0; i < skills3D.length; i++) {
         const s = skills3D[i];
         const pt = project3D(s.nx * orbitRadius, s.ny * orbitRadius, s.nz * orbitRadius);
 
-        // Draw glowing anchor point on the canvas at skill's location
         const depth = (pt.z + radius) / (radius * 2);
         const clampedDepth = Math.max(0, Math.min(1, depth));
 
-        if (clampedDepth > 0.45) {
-          ctx.fillStyle = `rgba(168, 85, 247, ${(clampedDepth * 0.7).toFixed(2)})`;
+        // Draw glowing surface beacon on the globe circle beneath the badge
+        if (clampedDepth > 0.38) {
+          ctx.fillStyle = `rgba(168, 85, 247, ${(clampedDepth * 0.75).toFixed(2)})`;
           ctx.beginPath();
-          ctx.arc(pt.x, pt.y, Math.max(2, 4 * clampedDepth), 0, Math.PI * 2);
+          ctx.arc(pt.x, pt.y, Math.max(2.2, 4.2 * clampedDepth), 0, Math.PI * 2);
           ctx.fill();
+
+          ctx.strokeStyle = `rgba(236, 72, 153, ${(clampedDepth * 0.5).toFixed(2)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, Math.max(4.5, 7.5 * clampedDepth), 0, Math.PI * 2);
+          ctx.stroke();
         }
 
-        // Perspective depth calculations
-        const badgeScale = Math.max(0.68, Math.min(1.16, pt.scale * 0.94));
-        const opacity = Math.max(0.25, Math.min(1, 0.25 + 0.75 * Math.pow(clampedDepth, 1.25)));
+        // Perspective depth and visibility calculations
+        const badgeScale = Math.max(0.72, Math.min(1.12, pt.scale * 0.95));
+        const opacity = Math.max(0.28, Math.min(1, 0.28 + 0.72 * Math.pow(clampedDepth, 1.2)));
         const zIndex = Math.round(clampedDepth * 100);
 
         s.el.style.transform = `translate3d(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px, 0) translate(-50%, -50%) scale(${badgeScale.toFixed(3)})`;
         s.el.style.opacity = opacity.toFixed(3);
         s.el.style.zIndex = zIndex;
 
-        // Ensure back-facing badges don't intercept front badges
-        if (clampedDepth < 0.28) {
-          s.el.style.pointerEvents = 'none';
-        } else {
+        // Front-facing badges are clickable, back-facing pass pointer events
+        if (clampedDepth > 0.35) {
           s.el.style.pointerEvents = 'auto';
+        } else {
+          s.el.style.pointerEvents = 'none';
         }
       }
 
