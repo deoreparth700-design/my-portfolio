@@ -19,63 +19,87 @@
 (function () {
   'use strict';
 
-  // 1. Accessibility Check: strictly respect prefers-reduced-motion
-  const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reducedMotionMedia.matches) {
-    console.log('[Animations] prefers-reduced-motion is active: skipping all animations.');
-    return;
-  }
-
-  // Verify GSAP and ScrollTrigger availability
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-    console.warn('[Animations] GSAP or ScrollTrigger not loaded. Animations disabled.');
-    return;
-  }
-
-  // Register ScrollTrigger plugin once
-  gsap.registerPlugin(ScrollTrigger);
-
-  let lenisInstance = null;
-  const matchMediaInstance = gsap.matchMedia();
-
   /* ==========================================================================
      1. WELCOME INTRO SCREEN ENGINE (MULTILINGUAL GREETING SWIPE)
      - Blank pastel viewport with ONE centered multilingual greeting
      - Sequence: Hello → Bonjour → Hola → नमस्ते → こんにちは → Ciao → 안녕하세요 → Olá → Hallo → مرحبا
      - Refined vertical swipe: current word drops/fades out, next enters
      - Smooth fade reveal of the portfolio underneath
-     - Honors prefers-reduced-motion and plays once per browser session
+     - Supports ?intro=1 override for testing/debugging
+     - Accessible simplified intro for prefers-reduced-motion
+     - Self-contained and independent of GSAP / ScrollTrigger startup
      ========================================================================== */
   const INTRO_SESSION_KEY = 'portfolio_welcome_intro_seen';
 
-  function initPreloader(onCompleteCallback) {
-    const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const hasSeenIntro = (() => {
-      try {
-        return sessionStorage.getItem(INTRO_SESSION_KEY) === 'true';
-      } catch (e) {
-        return false;
-      }
-    })();
+  function isIntroForced() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('intro') === '1' || params.has('intro');
+    } catch (e) {
+      return false;
+    }
+  }
 
-    let preloader = document.getElementById('animPreloader');
+  function hasSeenIntro() {
+    if (isIntroForced()) return false;
+    try {
+      return sessionStorage.getItem(INTRO_SESSION_KEY) === 'true';
+    } catch (e) {
+      return false;
+    }
+  }
 
-    // Skip entirely if seen this session or reduced-motion is requested
-    if (hasSeenIntro || reducedMotionMedia.matches) {
-      if (preloader) preloader.remove();
+  function markIntroSeen() {
+    if (isIntroForced()) return; // Don't write session persistence when forced via ?intro=1
+    try {
+      sessionStorage.setItem(INTRO_SESSION_KEY, 'true');
+    } catch (e) {}
+  }
+
+  function checkReducedMotion() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  const GREETINGS = [
+    'Hello',
+    'Bonjour',
+    'Hola',
+    'नमस्ते',
+    'こんにちは',
+    'Ciao',
+    '안녕하세요',
+    'Olá',
+    'Hallo',
+    'مرحبا'
+  ];
+
+  function runWelcomeIntro(onCompleteCallback) {
+    let completed = false;
+    function finishIntro() {
+      if (completed) return;
+      completed = true;
+      document.body.classList.remove('has-active-preloader');
+      const el = document.getElementById('animPreloader');
+      if (el) el.remove();
       document.body.style.overflow = '';
       if (typeof onCompleteCallback === 'function') {
         onCompleteCallback();
       }
+    }
+
+    if (hasSeenIntro()) {
+      finishIntro();
       return;
     }
 
-    // Mark as played in this session
-    try {
-      sessionStorage.setItem(INTRO_SESSION_KEY, 'true');
-    } catch (e) {}
+    markIntroSeen();
+    document.body.classList.add('has-active-preloader');
 
-    // Fallback: create preloader element if not present in DOM
+    let preloader = document.getElementById('animPreloader');
     if (!preloader) {
       preloader = document.createElement('div');
       preloader.className = 'anim-preloader';
@@ -87,99 +111,131 @@
         </div>
       `;
       document.body.prepend(preloader);
+    } else {
+      preloader.style.display = 'flex';
+      preloader.style.opacity = '1';
+      preloader.classList.remove('is-hidden');
     }
 
     document.body.style.overflow = 'hidden';
-    if (lenisInstance) {
-      lenisInstance.stop();
-    }
 
     const greetingEl = document.getElementById('welcomeGreeting');
     if (!greetingEl) {
-      if (preloader) preloader.remove();
-      document.body.style.overflow = '';
-      if (lenisInstance) lenisInstance.start();
-      if (typeof onCompleteCallback === 'function') onCompleteCallback();
+      finishIntro();
       return;
     }
 
-    const greetings = [
-      'Hello',
-      'Bonjour',
-      'Hola',
-      'नमस्ते',
-      'こんにちは',
-      'Ciao',
-      '안녕하세요',
-      'Olá',
-      'Hallo',
-      'مرحبا'
-    ];
+    const isReduced = checkReducedMotion();
 
-    const introTl = gsap.timeline();
+    // Mode A: Full magical vertical-swipe animation (GSAP available, normal motion or test forced)
+    if ((!isReduced || isIntroForced()) && typeof gsap !== 'undefined') {
+      const introTl = gsap.timeline();
 
-    // Initial greeting 'Hello' enters smoothly into exact center position
-    gsap.set(greetingEl, { textContent: greetings[0], y: -16, opacity: 0, filter: 'blur(6px)' });
-    introTl.to(greetingEl, {
-      y: 0,
-      opacity: 1,
-      filter: 'blur(0px)',
-      duration: 0.22,
-      ease: 'power2.out'
-    });
-    introTl.to({}, { duration: 0.15 });
-
-    // Step through each subsequent greeting
-    for (let i = 1; i < greetings.length; i++) {
-      const isLast = (i === greetings.length - 1);
-
-      // Current word drops away and fades out with subtle blur
-      introTl.to(greetingEl, {
-        y: 16,
-        opacity: 0,
-        filter: 'blur(6px)',
-        duration: 0.11,
-        ease: 'power2.in'
-      });
-
-      // Switch greeting text at exact position while invisible
-      introTl.set(greetingEl, {
-        textContent: greetings[i],
-        y: -16,
-        opacity: 0,
-        filter: 'blur(6px)'
-      });
-
-      // Next word smoothly enters the exact same center position
+      gsap.set(greetingEl, { textContent: GREETINGS[0], y: -16, opacity: 0, filter: 'blur(6px)' });
       introTl.to(greetingEl, {
         y: 0,
         opacity: 1,
         filter: 'blur(0px)',
-        duration: isLast ? 0.15 : 0.13,
+        duration: 0.22,
         ease: 'power2.out'
       });
+      introTl.to({}, { duration: 0.15 });
 
-      // Hold word (final word holds longer before reveal)
-      introTl.to({}, { duration: isLast ? 0.40 : 0.13 });
+      for (let i = 1; i < GREETINGS.length; i++) {
+        const isLast = (i === GREETINGS.length - 1);
+
+        introTl.to(greetingEl, {
+          y: 16,
+          opacity: 0,
+          filter: 'blur(6px)',
+          duration: 0.11,
+          ease: 'power2.in'
+        });
+
+        introTl.set(greetingEl, {
+          textContent: GREETINGS[i],
+          y: -16,
+          opacity: 0,
+          filter: 'blur(6px)'
+        });
+
+        introTl.to(greetingEl, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: isLast ? 0.15 : 0.13,
+          ease: 'power2.out'
+        });
+
+        introTl.to({}, { duration: isLast ? 0.40 : 0.13 });
+      }
+
+      introTl.to(preloader, {
+        opacity: 0,
+        duration: 0.70,
+        ease: 'power2.inOut',
+        onComplete: finishIntro
+      });
+      return;
     }
 
-    // After final greeting, smoothly fade the entire welcome screen away
-    introTl.to(preloader, {
-      opacity: 0,
-      duration: 0.75,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        preloader.remove();
-        document.body.style.overflow = '';
-        if (lenisInstance) {
-          lenisInstance.start();
-        }
-        if (typeof onCompleteCallback === 'function') {
-          onCompleteCallback();
-        }
+    // Mode B: Accessible simplified intro (prefers-reduced-motion active, with GSAP)
+    if (isReduced && typeof gsap !== 'undefined') {
+      const reducedTl = gsap.timeline();
+
+      gsap.set(greetingEl, { textContent: GREETINGS[0], opacity: 0, y: 0, filter: 'none' });
+      reducedTl.to(greetingEl, { opacity: 1, duration: 0.18, ease: 'power1.out' });
+      reducedTl.to({}, { duration: 0.20 });
+
+      for (let i = 1; i < GREETINGS.length; i++) {
+        const isLast = (i === GREETINGS.length - 1);
+
+        reducedTl.to(greetingEl, { opacity: 0, duration: 0.10, ease: 'power1.in' });
+        reducedTl.set(greetingEl, { textContent: GREETINGS[i], y: 0, filter: 'none' });
+        reducedTl.to(greetingEl, { opacity: 1, duration: 0.12, ease: 'power1.out' });
+        reducedTl.to({}, { duration: isLast ? 0.40 : 0.18 });
       }
-    });
+
+      reducedTl.to(preloader, {
+        opacity: 0,
+        duration: 0.55,
+        ease: 'power1.inOut',
+        onComplete: finishIntro
+      });
+      return;
+    }
+
+    // Mode C: Vanilla JS Fallback (Independent of GSAP)
+    let idx = 0;
+    greetingEl.textContent = GREETINGS[0];
+    greetingEl.style.opacity = '1';
+    greetingEl.style.transform = 'none';
+    greetingEl.style.filter = 'none';
+    greetingEl.style.transition = 'opacity 0.12s ease';
+
+    function advanceGreeting() {
+      idx++;
+      if (idx >= GREETINGS.length) {
+        preloader.style.transition = 'opacity 0.60s ease';
+        preloader.style.opacity = '0';
+        setTimeout(finishIntro, 650);
+        return;
+      }
+
+      const isLast = (idx === GREETINGS.length - 1);
+      greetingEl.style.opacity = '0';
+      setTimeout(() => {
+        greetingEl.textContent = GREETINGS[idx];
+        greetingEl.style.opacity = '1';
+        setTimeout(advanceGreeting, isLast ? 450 : 250);
+      }, 120);
+    }
+
+    setTimeout(advanceGreeting, 350);
   }
+
+  let lenisInstance = null;
+  let matchMediaInstance = null;
 
   /* ==========================================================================
      2. SLIDING ACTIVE CAPSULE NAVIGATION (Inspired by pszostak.pl)
@@ -309,50 +365,8 @@
       );
     }
 
-    // Split oversized name PARTH DEORE into individual letter masks
-    if (oversizedTitle && !oversizedTitle.dataset.split) {
-      oversizedTitle.dataset.split = 'true';
-      const spans = oversizedTitle.querySelectorAll('span');
-      spans.forEach((s) => {
-        const text = s.textContent.trim();
-        s.innerHTML = text
-          .split('')
-          .map((ch) => `<span class="anim-char-mask"><span class="anim-char">${ch}</span></span>`)
-          .join('');
-      });
 
-      const chars = oversizedTitle.querySelectorAll('.anim-char');
-      heroTl.to(
-        chars,
-        {
-          y: 0,
-          stagger: 0.035,
-          duration: 0.7,
-          ease: 'cubic-bezier(0.22, 1, 0.36, 1)'
-        },
-        '-=0.3'
-      );
-    }
 
-    // Role caption fade & slide
-    if (roleCaption) {
-      heroTl.fromTo(
-        roleCaption,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-        '-=0.2'
-      );
-    }
-
-    // Portrait card spring entrance
-    if (portraitCard) {
-      heroTl.fromTo(
-        portraitCard,
-        { opacity: 0, scale: 0.88 },
-        { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.5)' },
-        '-=0.4'
-      );
-    }
 
     // Hero background atmosphere parallax
     const heroSection = document.getElementById('hero');
@@ -372,6 +386,81 @@
           scrub: 1
         }
       });
+    }
+  }
+
+  /* ==========================================================================
+     4b. SCROLL-TRIGGERED REVEALS (All Sections)
+     ========================================================================== */
+  function initScrollReveals() {
+    // Section Headings Reveal
+    const headings = document.querySelectorAll(
+      '.section-main-title, .card-title-lg, .spec-title-head'
+    );
+
+    headings.forEach((heading, i) => {
+      gsap.fromTo(
+        heading,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            id: `heading-reveal-${i}`,
+            trigger: heading,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // Skill Bars & Accents: Hardware-accelerated scaleX(0→1)
+    const skillBars = document.querySelectorAll(
+      '.skill-bar, .skill-progress-bar, [data-skill-value], .name-divider-bar, .location-accent-bar, .accent-line'
+    );
+
+    skillBars.forEach((bar, index) => {
+      gsap.fromTo(
+        bar,
+        { scaleX: 0, transformOrigin: 'left center' },
+        {
+          scaleX: 1,
+          duration: 1.0,
+          ease: 'power2.out',
+          scrollTrigger: {
+            id: `skill-bar-${index}`,
+            trigger: bar,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // Staggered entrance for floating skill badges around 3D globe
+    const skillSphere = document.getElementById('skillsSphereContainer');
+    const skillBadges = document.querySelectorAll('.floating-tech-badge');
+    if (skillSphere && skillBadges.length) {
+      gsap.fromTo(
+        skillBadges,
+        { opacity: 0, scale: 0.4 },
+        {
+          opacity: 1,
+          scale: 1,
+          stagger: 0.035,
+          duration: 0.7,
+          ease: 'back.out(1.6)',
+          scrollTrigger: {
+            id: 'skills-sphere-badges',
+            trigger: skillSphere,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
     }
   }
 
@@ -515,46 +604,10 @@
   }
 
   /* ==========================================================================
-     7. PINNED HORIZONTAL GALLERY (Projects Section)
-     - Desktop: pins section for 250% viewport height and scrubs horizontally
-     - Mobile: seamlessly skipped via matchMedia (< 768px)
+     7. PROJECTS SECTION: Natural downward scrolling with 2-column grid
      ========================================================================== */
   function initPinnedHorizontalGallery() {
-    matchMediaInstance.add('(min-width: 768px)', () => {
-      const projectsSection = document.getElementById('projects');
-      const projectsGrid = document.getElementById('projectsGrid');
-      if (!projectsSection || !projectsGrid) return;
-
-      projectsSection.classList.add('anim-horizontal-active');
-
-      const computeDistance = () => {
-        const gridWidth = projectsGrid.scrollWidth;
-        const viewportWidth = window.innerWidth;
-        return -(gridWidth - viewportWidth + 140);
-      };
-
-      const horizTween = gsap.to(projectsGrid, {
-        x: computeDistance,
-        ease: 'none',
-        scrollTrigger: {
-          id: 'projects-pinned-horizontal',
-          trigger: projectsSection,
-          start: 'top top',
-          end: '+=250%',
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true
-        }
-      });
-
-      return () => {
-        projectsSection.classList.remove('anim-horizontal-active');
-        gsap.set(projectsGrid, { clearProps: 'all' });
-        if (horizTween.scrollTrigger) {
-          horizTween.scrollTrigger.kill();
-        }
-      };
-    });
+    // Projects flow naturally downwards without pinning or locking the viewport
   }
 
   /* ==========================================================================
@@ -736,34 +789,56 @@
      CLEANUP ON UNLOAD
      ========================================================================== */
   window.addEventListener('beforeunload', () => {
-    ScrollTrigger.getAll().forEach((t) => t.kill());
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    }
     if (lenisInstance) lenisInstance.destroy();
   });
 
   /* ==========================================================================
      ENGINE INITIALIZATION
      ========================================================================== */
-  function startEngine() {
+  function startSiteEngine() {
+    // Pop up hero reveal-pop elements smoothly upon visit
+    requestAnimationFrame(() => {
+      const heroRevealTargets = document.querySelectorAll('#hero .reveal-pop, .header-wrapper .reveal-pop');
+      heroRevealTargets.forEach((el) => {
+        el.classList.add('is-visible');
+      });
+    });
+
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      console.warn('[Animations] GSAP or ScrollTrigger not loaded. Site animations disabled.');
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    matchMediaInstance = gsap.matchMedia();
+
     initSmoothScroll();
     initScrollProgressBar();
     initSlidingNavPill();
     initMagneticButtons();
+    initCustomCursor();
 
-    initPreloader(() => {
-      initCustomCursor();
-      initHeroAnimations();
-      initScrollReveals();
-      initPinnedHorizontalGallery();
-      initParallaxAndTilt();
+    initHeroAnimations();
+    initScrollReveals();
+    initPinnedHorizontalGallery();
+    initParallaxAndTilt();
 
-      ScrollTrigger.refresh();
-      logRegisteredTriggers();
+    ScrollTrigger.refresh();
+    logRegisteredTriggers();
+  }
+
+  function bootstrap() {
+    runWelcomeIntro(() => {
+      startSiteEngine();
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startEngine);
+    document.addEventListener('DOMContentLoaded', bootstrap);
   } else {
-    startEngine();
+    bootstrap();
   }
 })();

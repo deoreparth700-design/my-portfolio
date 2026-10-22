@@ -220,6 +220,14 @@
   opacity: 1;
 }
 
+/* Keep hero elements ready to pop up the moment intro finishes */
+.has-active-preloader #hero .reveal-pop {
+  opacity: 0 !important;
+  transform: translateY(52px) scale(0.92) !important;
+  filter: blur(8px) !important;
+  transition: none !important;
+}
+
 .welcome-greeting-stage {
   display: flex;
   align-items: center;
@@ -323,37 +331,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   7. Pinned Horizontal Gallery (Projects Section)
+   7. Projects Showcase: Natural vertical scrolling with 2-column grid
    -------------------------------------------------------------------------- */
-@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-  .anim-horizontal-active {
-    overflow: hidden !important;
-    position: relative;
-    padding-top: 5rem !important;
-    padding-bottom: 5rem !important;
-  }
-
-  .anim-horizontal-active .container {
-    max-width: 100% !important;
-    padding-left: clamp(2rem, 6vw, 5rem) !important;
-    padding-right: clamp(2rem, 6vw, 5rem) !important;
-  }
-
-  .anim-horizontal-active .projects-2col-grid {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 3rem !important;
-    width: max-content !important;
-    will-change: transform;
-    margin-top: 1.5rem;
-  }
-
-  .anim-horizontal-active .showcase-project-card {
-    flex: 0 0 clamp(480px, 48vw, 640px) !important;
-    width: clamp(480px, 48vw, 640px) !important;
-    max-width: 85vw !important;
-  }
-}
 
 /* Card hover scaling and 3D depth elevation */
 @media (prefers-reduced-motion: no-preference) {
@@ -527,42 +506,20 @@ button:active {
    Site must look 100% IDENTICAL to the original layout with no shifts.
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+/* Keep preloader visible for intro until reveal */
+  .anim-preloader {
+    display: flex !important;
   }
 
-  .anim-mask,
-  .anim-char-mask {
-    display: inline !important;
-    overflow: visible !important;
-    margin-right: 0 !important;
+  .anim-preloader.is-hidden {
+    display: none !important;
   }
 
-  .anim-word,
-  .anim-char {
-    display: inline !important;
-    transform: none !important;
-    will-change: auto !important;
-  }
-
-  .anim-preloader,
   .anim-page-transition,
   .anim-cursor,
   .anim-scroll-progress,
   .nav-sliding-pill,
   .anim-ambient-orb {
     display: none !important;
-  }
-
-  .anim-horizontal-active {
-    overflow: visible !important;
-  }
-
-  .anim-horizontal-active .projects-2col-grid {
-    display: grid !important;
-    transform: none !important;
   }
 }
