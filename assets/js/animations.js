@@ -39,81 +39,144 @@
   const matchMediaInstance = gsap.matchMedia();
 
   /* ==========================================================================
-     1. PRELOADER ENGINE
-     - Full-screen overlay that reveals the site with a clip-path wipe
-       (left-to-right, 1.2s, ease: power4.inOut)
-     - Percentage counter (0→100) with custom ease
+     1. WELCOME INTRO SCREEN ENGINE (MULTILINGUAL GREETING SWIPE)
+     - Blank pastel viewport with ONE centered multilingual greeting
+     - Sequence: Hello → Bonjour → Hola → नमस्ते → こんにちは → Ciao → 안녕하세요 → Olá → Hallo → مرحبا
+     - Refined vertical swipe: current word drops/fades out, next enters
+     - Smooth fade reveal of the portfolio underneath
+     - Honors prefers-reduced-motion and plays once per browser session
      ========================================================================== */
+  const INTRO_SESSION_KEY = 'portfolio_welcome_intro_seen';
+
   function initPreloader(onCompleteCallback) {
-    const preloader = document.createElement('div');
-    preloader.className = 'anim-preloader';
-    preloader.id = 'animPreloader';
-    preloader.setAttribute('aria-hidden', 'true');
+    const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const hasSeenIntro = (() => {
+      try {
+        return sessionStorage.getItem(INTRO_SESSION_KEY) === 'true';
+      } catch (e) {
+        return false;
+      }
+    })();
 
-    preloader.innerHTML = `
-      <div class="anim-preloader-inner">
-        <div class="anim-preloader-badge">
-          <span class="anim-preloader-dot"></span>
-          <span>PARTH DEORE • BACKEND SYSTEMS</span>
-        </div>
-        <div class="anim-preloader-number">
-          <span id="animPreloaderCount">0</span><span class="anim-preloader-pct">%</span>
-        </div>
-        <div class="anim-preloader-progress-track">
-          <div class="anim-preloader-progress-bar" id="animPreloaderBar"></div>
-        </div>
-        <div class="anim-preloader-status" id="animPreloaderStatus">Loading system architecture...</div>
-      </div>
-    `;
+    let preloader = document.getElementById('animPreloader');
 
-    document.body.prepend(preloader);
+    // Skip entirely if seen this session or reduced-motion is requested
+    if (hasSeenIntro || reducedMotionMedia.matches) {
+      if (preloader) preloader.remove();
+      document.body.style.overflow = '';
+      if (typeof onCompleteCallback === 'function') {
+        onCompleteCallback();
+      }
+      return;
+    }
+
+    // Mark as played in this session
+    try {
+      sessionStorage.setItem(INTRO_SESSION_KEY, 'true');
+    } catch (e) {}
+
+    // Fallback: create preloader element if not present in DOM
+    if (!preloader) {
+      preloader = document.createElement('div');
+      preloader.className = 'anim-preloader';
+      preloader.id = 'animPreloader';
+      preloader.setAttribute('aria-live', 'polite');
+      preloader.innerHTML = `
+        <div class="welcome-greeting-stage">
+          <span class="welcome-greeting" id="welcomeGreeting" dir="auto">Hello</span>
+        </div>
+      `;
+      document.body.prepend(preloader);
+    }
+
     document.body.style.overflow = 'hidden';
+    if (lenisInstance) {
+      lenisInstance.stop();
+    }
 
-    const countEl = document.getElementById('animPreloaderCount');
-    const barEl = document.getElementById('animPreloaderBar');
-    const statusEl = document.getElementById('animPreloaderStatus');
+    const greetingEl = document.getElementById('welcomeGreeting');
+    if (!greetingEl) {
+      if (preloader) preloader.remove();
+      document.body.style.overflow = '';
+      if (lenisInstance) lenisInstance.start();
+      if (typeof onCompleteCallback === 'function') onCompleteCallback();
+      return;
+    }
 
-    const statuses = [
-      'Initializing core engine...',
-      'Synthesizing backend schemas...',
-      'Assembling API contracts...',
-      'Mounting reactive environment...',
-      'System ready.'
+    const greetings = [
+      'Hello',
+      'Bonjour',
+      'Hola',
+      'नमस्ते',
+      'こんにちは',
+      'Ciao',
+      '안녕하세요',
+      'Olá',
+      'Hallo',
+      'مرحبا'
     ];
 
-    const progressObj = { value: 0 };
+    const introTl = gsap.timeline();
 
-    gsap.to(progressObj, {
-      value: 100,
-      duration: 1.35,
+    // Initial greeting 'Hello' enters smoothly into exact center position
+    gsap.set(greetingEl, { textContent: greetings[0], y: -16, opacity: 0, filter: 'blur(6px)' });
+    introTl.to(greetingEl, {
+      y: 0,
+      opacity: 1,
+      filter: 'blur(0px)',
+      duration: 0.22,
+      ease: 'power2.out'
+    });
+    introTl.to({}, { duration: 0.15 });
+
+    // Step through each subsequent greeting
+    for (let i = 1; i < greetings.length; i++) {
+      const isLast = (i === greetings.length - 1);
+
+      // Current word drops away and fades out with subtle blur
+      introTl.to(greetingEl, {
+        y: 16,
+        opacity: 0,
+        filter: 'blur(6px)',
+        duration: 0.11,
+        ease: 'power2.in'
+      });
+
+      // Switch greeting text at exact position while invisible
+      introTl.set(greetingEl, {
+        textContent: greetings[i],
+        y: -16,
+        opacity: 0,
+        filter: 'blur(6px)'
+      });
+
+      // Next word smoothly enters the exact same center position
+      introTl.to(greetingEl, {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: isLast ? 0.15 : 0.13,
+        ease: 'power2.out'
+      });
+
+      // Hold word (final word holds longer before reveal)
+      introTl.to({}, { duration: isLast ? 0.40 : 0.13 });
+    }
+
+    // After final greeting, smoothly fade the entire welcome screen away
+    introTl.to(preloader, {
+      opacity: 0,
+      duration: 0.75,
       ease: 'power2.inOut',
-      onUpdate: () => {
-        const val = Math.round(progressObj.value);
-        if (countEl) countEl.textContent = val;
-        if (barEl) barEl.style.transform = `scaleX(${val / 100})`;
-
-        if (statusEl) {
-          const stepIndex = Math.min(
-            statuses.length - 1,
-            Math.floor((val / 100) * statuses.length)
-          );
-          statusEl.textContent = statuses[stepIndex];
-        }
-      },
       onComplete: () => {
-        // Left-to-right clip-path wipe reveal
-        gsap.to(preloader, {
-          clipPath: 'polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)',
-          duration: 1.2,
-          ease: 'power4.inOut',
-          onComplete: () => {
-            preloader.remove();
-            document.body.style.overflow = '';
-            if (typeof onCompleteCallback === 'function') {
-              onCompleteCallback();
-            }
-          }
-        });
+        preloader.remove();
+        document.body.style.overflow = '';
+        if (lenisInstance) {
+          lenisInstance.start();
+        }
+        if (typeof onCompleteCallback === 'function') {
+          onCompleteCallback();
+        }
       }
     });
   }
@@ -685,9 +748,9 @@
     initScrollProgressBar();
     initSlidingNavPill();
     initMagneticButtons();
-    initCustomCursor();
 
     initPreloader(() => {
+      initCustomCursor();
       initHeroAnimations();
       initScrollReveals();
       initPinnedHorizontalGallery();
