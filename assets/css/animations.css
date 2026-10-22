@@ -298,55 +298,50 @@
   will-change: transform;
 }
 
-/* Subtle scroll down cue indicator at bottom of hero screen */
+/* Subtle mouse scroll icon at bottom of hero screen */
 .hero-scroll-cue {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 8px 18px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(124, 58, 237, 0.16);
-  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.08);
-  color: #64748B;
+  justify-content: center;
   text-decoration: none;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 2rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 2.25rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   cursor: pointer;
   z-index: 2;
   position: relative;
 }
 
 .hero-scroll-cue:hover {
-  transform: translateY(-3px);
-  color: #7C3AED;
-  border-color: rgba(124, 58, 237, 0.35);
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+  transform: translateY(-4px);
 }
 
 .scroll-cue-mouse {
-  width: 16px;
-  height: 24px;
-  border-radius: 12px;
-  border: 1.8px solid #A855F7;
+  width: 26px;
+  height: 42px;
+  border-radius: 14px;
+  border: 2px solid rgba(124, 58, 237, 0.32);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.08);
   position: relative;
-  display: inline-block;
+  display: block;
   box-sizing: border-box;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.hero-scroll-cue:hover .scroll-cue-mouse {
+  border-color: rgba(124, 58, 237, 0.65);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
 }
 
 .scroll-cue-wheel {
   position: absolute;
-  top: 4px;
+  top: 6px;
   left: 50%;
-  width: 3px;
-  height: 5px;
-  background: #EC4899;
+  width: 3.5px;
+  height: 7px;
+  background: linear-gradient(180deg, #7C3AED, #EC4899);
   border-radius: 2px;
   transform: translateX(-50%);
   animation: scrollWheelBounce 1.8s infinite ease-in-out;
@@ -354,15 +349,13 @@
 
 @keyframes scrollWheelBounce {
   0% { transform: translate(-50%, 0); opacity: 1; }
-  60% { transform: translate(-50%, 8px); opacity: 0.2; }
+  60% { transform: translate(-50%, 10px); opacity: 0.2; }
   100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
 @media (max-height: 700px) {
   .hero-scroll-cue {
-    margin-top: 1rem;
-    padding: 6px 14px;
-    font-size: 0.7rem;
+    margin-top: 1.25rem;
   }
 }
 
