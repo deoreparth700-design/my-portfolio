@@ -235,6 +235,17 @@
       );
     }
 
+    // Scroll down cue entrance
+    const scrollCue = document.querySelector('.hero-scroll-cue');
+    if (scrollCue) {
+      heroTl.fromTo(
+        scrollCue,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+        '-=0.3'
+      );
+    }
+
     // Split oversized name PARTH DEORE into individual letter masks
     if (oversizedTitle && !oversizedTitle.dataset.split) {
       oversizedTitle.dataset.split = 'true';

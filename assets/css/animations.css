@@ -287,7 +287,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   6. Hero Atmosphere & Sticker
+   6. Hero Atmosphere & Full-Screen First Page Experience
    -------------------------------------------------------------------------- */
 .anim-hero-bg-parallax {
   position: absolute;
@@ -296,6 +296,74 @@
   z-index: 0;
   background: radial-gradient(circle at 50% 35%, rgba(192, 132, 252, 0.22) 0%, rgba(244, 114, 182, 0.12) 42%, transparent 70%);
   will-change: transform;
+}
+
+/* Subtle scroll down cue indicator at bottom of hero screen */
+.hero-scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.08);
+  color: #64748B;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-scroll-cue:hover {
+  transform: translateY(-3px);
+  color: #7C3AED;
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+}
+
+.scroll-cue-mouse {
+  width: 16px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1.8px solid #A855F7;
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.scroll-cue-wheel {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 3px;
+  height: 5px;
+  background: #EC4899;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: scrollWheelBounce 1.8s infinite ease-in-out;
+}
+
+@keyframes scrollWheelBounce {
+  0% { transform: translate(-50%, 0); opacity: 1; }
+  60% { transform: translate(-50%, 8px); opacity: 0.2; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@media (max-height: 700px) {
+  .hero-scroll-cue {
+    margin-top: 1rem;
+    padding: 6px 14px;
+    font-size: 0.7rem;
+  }
 }
 
 /* --------------------------------------------------------------------------
