@@ -36,6 +36,7 @@ The portfolio features a space-inspired visual design with responsive layouts, a
 ```text
 my-portfolio/
 │
+├── assets/
 ├── index.html
 ├── resume.pdf
 └── README.md
