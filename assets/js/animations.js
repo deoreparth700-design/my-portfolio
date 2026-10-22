@@ -604,10 +604,21 @@
   }
 
   /* ==========================================================================
-     7. PROJECTS SECTION: Natural downward scrolling with 2-column grid
+     7. PROJECTS SECTION: Seamless Horizontal Carousel & Non-Sticky Scroll
      ========================================================================== */
   function initPinnedHorizontalGallery() {
-    // Projects flow naturally downwards without pinning or locking the viewport
+    // Pinned scroll was removed to ensure effortless vertical scrolling.
+    // The infinite circular carousel is powered smoothly by window.projectsSlider in main.js.
+    const projectsSection = document.getElementById('projects');
+    if (!projectsSection) return;
+
+    ScrollTrigger.create({
+      trigger: projectsSection,
+      start: 'top 90%',
+      onEnter: () => {
+        window.projectsSlider?.refresh?.();
+      }
+    });
   }
 
   /* ==========================================================================
@@ -633,31 +644,9 @@
       });
     });
 
-    // 8b. Project Mockup Screenshots subtle Parallax
-    const projectImages = document.querySelectorAll('.mockup-screenshot');
-    projectImages.forEach((img, index) => {
-      const card = img.closest('.showcase-project-card') || img;
-      gsap.fromTo(
-        img,
-        { scale: 1.0, yPercent: -4 },
-        {
-          scale: 1.06,
-          yPercent: 4,
-          ease: 'none',
-          scrollTrigger: {
-            id: `project-image-parallax-${index}`,
-            trigger: card,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1
-          }
-        }
-      );
-    });
-
-    // 8c. 3D Card Tilt with Perspective
+    // 8b. 3D Card Tilt with Perspective (exclusive to Bento and Spec boxes)
     const tiltCards = document.querySelectorAll(
-      '.bento-card, .showcase-project-card, .about-spec-box, .contact-card-box'
+      '.bento-card, .about-spec-box, .contact-card-box'
     );
 
     tiltCards.forEach((card) => {

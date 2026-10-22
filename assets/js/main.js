@@ -9,8 +9,7 @@
  * - Active ScrollSpy navigation
  * - Modal preview lightbox & toast system
  */
-
-document.addEventListener('DOMContentLoaded', () => {
+function initMainApp() {
   /* ==========================================
      PROJECT DATA (Screenshot 39 layout)
      ========================================== */
@@ -83,86 +82,416 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const grid = document.getElementById('projectsGrid');
+  const sliderWindow = document.getElementById('projectsSliderWindow');
+  const dotsContainer = document.getElementById('projectsDots');
+  const prevBtn = document.getElementById('projectsPrevBtn');
+  const nextBtn = document.getElementById('projectsNextBtn');
+  const sidePrevBtn = document.getElementById('projectsSidePrevBtn');
+  const sideNextBtn = document.getElementById('projectsSideNextBtn');
+
+  const SETS_COUNT = 5;
+  const BASE_SET_INDEX = 2; // Middle set (indices 10..14)
 
   function renderProjects() {
     if (!grid) return;
     grid.innerHTML = '';
 
-    projects.forEach((p, idx) => {
-      const card = document.createElement('article');
-      card.className = 'showcase-project-card reveal-pop';
-      card.dataset.id = p.id;
-      card.style.transitionDelay = `${(idx % 2) * 0.12}s`;
+    for (let s = 0; s < SETS_COUNT; s++) {
+      projects.forEach((p, pIdx) => {
+        const globalIdx = s * projects.length + pIdx;
+        const isInitialCenter = (s === BASE_SET_INDEX && pIdx === 0);
 
-      const liveBtnHtml = p.live 
-        ? `<a href="${p.live}" target="_blank" rel="noopener" class="project-live-badge-btn" aria-label="Visit live demo">
-             <span>Live ↗</span>
-           </a>`
-        : '';
+        const card = document.createElement('article');
+        card.className = `showcase-project-card ${isInitialCenter ? 'is-active-center' : ''}`;
+        card.dataset.id = p.id;
+        card.dataset.projectIndex = pIdx;
+        card.dataset.globalIndex = globalIdx;
 
-      const tagsHtml = p.tags.map(t => `<span class="tech-tag-pill">${t}</span>`).join('');
+        const liveBtnHtml = p.live 
+          ? `<a href="${p.live}" target="_blank" rel="noopener" class="project-live-badge-btn" aria-label="Visit live demo">
+               <span>Live ↗</span>
+             </a>`
+          : '';
 
-      card.innerHTML = `
-        <header class="project-card-header">
-          <div class="project-meta-eyebrow">
-            <span class="eyebrow-num">${p.num}</span>
-            <span class="eyebrow-line"></span>
-            <span class="eyebrow-cat">${p.type}</span>
-          </div>
-          <div class="project-title-action-row">
-            <h3 class="project-showcase-title">${p.title}</h3>
-            <div class="project-header-actions">
-              <a href="${p.github}" target="_blank" rel="noopener" class="project-gradient-btn" aria-label="View source on GitHub">
-                <span class="btn-gradient-overlay"></span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
-                </svg>
-                <span class="btn-label">GitHub ↗</span>
-              </a>
-              ${liveBtnHtml}
+        const tagsHtml = p.tags.map(t => `<span class="tech-tag-pill">${t}</span>`).join('');
+
+        card.innerHTML = `
+          <header class="project-card-header">
+            <div class="project-meta-eyebrow">
+              <span class="eyebrow-num">${p.num}</span>
+              <span class="eyebrow-line"></span>
+              <span class="eyebrow-cat">${p.type}</span>
             </div>
-          </div>
-        </header>
+            <div class="project-title-action-row">
+              <h3 class="project-showcase-title">${p.title}</h3>
+              <div class="project-header-actions">
+                <a href="${p.github}" target="_blank" rel="noopener" class="project-gradient-btn" aria-label="View source on GitHub">
+                  <span class="btn-gradient-overlay"></span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                    <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                  </svg>
+                  <span class="btn-label">GitHub ↗</span>
+                </a>
+                ${liveBtnHtml}
+              </div>
+            </div>
+          </header>
 
-        <div class="project-colored-frame interactive-spotlight ${p.colorClass}" data-id="${p.id}" title="Click to inspect high-resolution preview">
-          <div class="frame-inner-content">
-            <p class="frame-lead-desc">${p.leadDesc}</p>
-            <div class="mockup-stage-wrap">
-              <div class="mockup-window">
-                <div class="mockup-header-dots">
-                  <span class="dot-red"></span>
-                  <span class="dot-yellow"></span>
-                  <span class="dot-green"></span>
-                </div>
-                <div class="mockup-img-container">
-                  <img src="${p.image}" alt="${p.alt}" class="mockup-screenshot" loading="eager">
+          <div class="project-colored-frame interactive-spotlight ${p.colorClass}" data-id="${p.id}" title="Click to inspect high-resolution preview">
+            <div class="frame-inner-content">
+              <p class="frame-lead-desc">${p.leadDesc}</p>
+              <div class="mockup-stage-wrap">
+                <div class="mockup-window">
+                  <div class="mockup-header-dots">
+                    <span class="dot-red"></span>
+                    <span class="dot-yellow"></span>
+                    <span class="dot-green"></span>
+                  </div>
+                  <div class="mockup-img-container">
+                    <img src="${p.image}" alt="${p.alt}" class="mockup-screenshot" loading="eager">
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="project-card-footer">
-          <div class="project-pills-row">
-            ${tagsHtml}
+          <div class="project-card-footer">
+            <div class="project-pills-row">
+              ${tagsHtml}
+            </div>
+            <button type="button" class="inspect-pill-btn inspect-btn-trigger" data-id="${p.id}">
+              Inspect Details 🔍
+            </button>
           </div>
-          <button type="button" class="inspect-pill-btn inspect-btn-trigger" data-id="${p.id}">
-            Inspect Details 🔍
-          </button>
-        </div>
-      `;
+        `;
 
-      grid.appendChild(card);
-    });
+        grid.appendChild(card);
+      });
+    }
 
-    // Attach click listeners for preview inspection
+    // Populate the 5 Pagination Dots (representing projects 1..5)
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      projects.forEach((p, idx) => {
+        const dot = document.createElement('button');
+        dot.className = `slider-dot ${idx === 0 ? 'is-active' : ''}`;
+        dot.dataset.projectIndex = idx;
+        dot.setAttribute('aria-label', `Navigate to project ${idx + 1}: ${p.title}`);
+        dot.addEventListener('click', () => {
+          window.projectsSlider?.goToProject(idx);
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    // Attach click listeners for preview inspection modal & card centering
     document.querySelectorAll('.project-colored-frame, .inspect-btn-trigger').forEach(el => {
-      el.addEventListener('click', () => {
-        const id = el.dataset.id || el.closest('.showcase-project-card')?.dataset.id;
-        if (id) openProjectModal(id);
+      el.addEventListener('click', (e) => {
+        if (window.projectsSlider?.isDragged()) return;
+        const card = el.closest('.showcase-project-card');
+        const isCenter = card?.classList.contains('is-active-center');
+        const isInspectBtn = el.classList.contains('inspect-btn-trigger');
+
+        // Clicking inspect details button or clicking the frame of the center card opens the modal
+        if (isInspectBtn || isCenter) {
+          e.stopPropagation();
+          const id = el.dataset.id || card?.dataset.id;
+          if (id) openProjectModal(id);
+        } else if (card) {
+          // Clicking a neighboring card brings it into center
+          e.stopPropagation();
+          const pIdx = parseInt(card.dataset.projectIndex, 10);
+          window.projectsSlider?.goToProject(pIdx);
+        }
       });
     });
+
+    // Initialize Sliding Loop Controller
+    initSliderController();
+  }
+
+  function initSliderController() {
+    if (!grid || !sliderWindow) return;
+
+    const cards = Array.from(grid.querySelectorAll('.showcase-project-card'));
+    if (!cards.length) return;
+
+    const PROJ_COUNT = projects.length; // 5
+
+    let step = 0;
+    let oneSetWidth = 0;
+    let baseCenterOffset = 0;
+    let prevBaseOffset = null;
+    let currentX = 0;
+    let targetX = 0;
+
+    let isHovered = false;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartTargetX = 0;
+    let lastDragX = 0;
+    let dragVelocity = 0;
+    let hasDraggedMeaningfully = false;
+    let isTouchScroll = false;
+    let pauseUntil = 0;
+    let lastFrameTime = performance.now();
+    let currentActiveProjIndex = 0;
+
+    // Smooth, visible slow continuous glide (~40px/s from right to left)
+    const autoSpeed = 40;
+
+    function measure() {
+      if (!cards[0]) return;
+      const cardW = cards[0].offsetWidth;
+      const gridStyle = window.getComputedStyle(grid);
+      const gap = parseFloat(gridStyle.gap) || 40;
+      step = cardW + gap;
+      oneSetWidth = PROJ_COUNT * step;
+
+      const winW = sliderWindow.offsetWidth || window.innerWidth;
+      const baseCard = cards[BASE_SET_INDEX * PROJ_COUNT];
+      if (!baseCard) return;
+
+      const newBaseOffset = (winW / 2) - (baseCard.offsetLeft + cardW / 2);
+
+      if (prevBaseOffset === null) {
+        currentX = newBaseOffset;
+        targetX = newBaseOffset;
+      } else {
+        const delta = newBaseOffset - prevBaseOffset;
+        currentX += delta;
+        targetX += delta;
+      }
+      baseCenterOffset = newBaseOffset;
+      prevBaseOffset = newBaseOffset;
+    }
+
+    measure();
+
+    // Mathematical boundary wrapping (O(1), zero while-loop risks)
+    function wrap() {
+      if (!oneSetWidth || oneSetWidth <= 0) return;
+      const minX = baseCenterOffset - oneSetWidth;
+      const maxX = baseCenterOffset;
+      if (targetX < minX) {
+        const wraps = Math.ceil((minX - targetX) / oneSetWidth);
+        targetX += wraps * oneSetWidth;
+        currentX += wraps * oneSetWidth;
+      } else if (targetX > maxX) {
+        const wraps = Math.ceil((targetX - maxX) / oneSetWidth);
+        targetX -= wraps * oneSetWidth;
+        currentX -= wraps * oneSetWidth;
+      }
+    }
+
+    let currentActiveCard = cards[BASE_SET_INDEX * PROJ_COUNT] || null;
+
+    function updateCenterCard() {
+      const winW = sliderWindow.offsetWidth || window.innerWidth;
+      const winCenter = sliderWindow.getBoundingClientRect().left + winW / 2;
+
+      let closestCard = null;
+      let minDiff = Infinity;
+
+      for (let i = 0; i < cards.length; i++) {
+        const c = cards[i];
+        const rect = c.getBoundingClientRect();
+        // Skip cards far out of view
+        if (rect.right < -400 || rect.left > window.innerWidth + 400) continue;
+        const cardCenter = rect.left + rect.width / 2;
+        const diff = Math.abs(cardCenter - winCenter);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestCard = c;
+        }
+      }
+
+      if (closestCard && closestCard !== currentActiveCard) {
+        if (currentActiveCard) currentActiveCard.classList.remove('is-active-center');
+        closestCard.classList.add('is-active-center');
+        currentActiveCard = closestCard;
+
+        const pIdx = parseInt(closestCard.dataset.projectIndex, 10);
+        if (pIdx !== currentActiveProjIndex) {
+          currentActiveProjIndex = pIdx;
+          const dots = dotsContainer?.querySelectorAll('.slider-dot');
+          dots?.forEach((dot, idx) => {
+            dot.classList.toggle('is-active', idx === pIdx);
+          });
+        }
+      }
+    }
+
+    function animate(now) {
+      const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+      lastFrameTime = now;
+
+      // Automatically slide continuously and slowly from right to left
+      if (!isHovered && !isDragging && now >= pauseUntil) {
+        targetX -= autoSpeed * dt;
+      }
+
+      // Smooth lerp when not dragging directly
+      if (!isDragging) {
+        currentX += (targetX - currentX) * 0.12;
+      } else {
+        currentX = targetX;
+      }
+
+      wrap();
+
+      grid.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+      updateCenterCard();
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+
+    // Effortless forward & backward controls
+    function next() {
+      pauseUntil = performance.now() + 1500; // Brief 1.5s pause after manual click, then resumes auto-slide
+      targetX -= step;
+    }
+
+    function prev() {
+      pauseUntil = performance.now() + 1500;
+      targetX += step;
+    }
+
+    function goToProject(targetIdx) {
+      pauseUntil = performance.now() + 1500;
+      let diff = targetIdx - currentActiveProjIndex;
+      // Shortest circular direction around 5 projects
+      if (diff > 2) diff -= 5;
+      if (diff < -2) diff += 5;
+      targetX -= diff * step;
+    }
+
+    // Attach click listeners to all navigation buttons
+    if (sideNextBtn) sideNextBtn.addEventListener('click', (e) => { e.preventDefault(); next(); });
+    if (sidePrevBtn) sidePrevBtn.addEventListener('click', (e) => { e.preventDefault(); prev(); });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.preventDefault(); next(); });
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.preventDefault(); prev(); });
+
+    // Clicking anywhere on a card (header, description, mockup, or tags) brings it to center
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (hasDraggedMeaningfully) return;
+        if (e.target.closest('a, button, .project-colored-frame')) return;
+        const pIdx = parseInt(card.dataset.projectIndex, 10);
+        goToProject(pIdx);
+      });
+    });
+
+    // Only pause auto-glide when hovering directly over action buttons so clicks are effortless
+    document.querySelectorAll('.project-gradient-btn, .project-live-badge-btn, .inspect-pill-btn, .slider-nav-btn, .slider-side-arrow-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { isHovered = true; });
+      btn.addEventListener('mouseleave', () => { isHovered = false; });
+    });
+
+    // Horizontal wheel / Trackpad swipe support (without locking vertical page scroll)
+    sliderWindow.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+        const delta = e.shiftKey ? e.deltaY : e.deltaX;
+        targetX -= delta * 0.9;
+        pauseUntil = performance.now() + 1500;
+      }
+    }, { passive: true });
+
+    // Pointer Drag & Swipe (Mouse + Touch)
+    function onPointerDown(e) {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      if (e.target.closest('button, a')) return;
+      isDragging = true;
+      isTouchScroll = false;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragStartTargetX = targetX;
+      lastDragX = e.clientX;
+      dragVelocity = 0;
+      hasDraggedMeaningfully = false;
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+
+      // If user is scrolling vertically on touch, release horizontal drag
+      if (!hasDraggedMeaningfully && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
+        isDragging = false;
+        isTouchScroll = true;
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerUp);
+        return;
+      }
+
+      if (Math.abs(dx) > 6) hasDraggedMeaningfully = true;
+      dragVelocity = e.clientX - lastDragX;
+      lastDragX = e.clientX;
+      targetX = dragStartTargetX + dx;
+      currentX = targetX;
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+
+      // Flick inertia
+      targetX += dragVelocity * 8;
+      // Snap cleanly to nearest card
+      if (step > 0) {
+        const diffFromBase = targetX - baseCenterOffset;
+        const nearestStep = Math.round(diffFromBase / step);
+        targetX = baseCenterOffset + (nearestStep * step);
+      }
+
+      pauseUntil = performance.now() + 1200;
+      setTimeout(() => { hasDraggedMeaningfully = false; }, 80);
+    }
+
+    sliderWindow.addEventListener('pointerdown', onPointerDown);
+
+    // Keyboard Arrow navigation when visible
+    window.addEventListener('keydown', (e) => {
+      const rect = sliderWindow.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView) {
+        if (e.key === 'ArrowRight') { next(); }
+        else if (e.key === 'ArrowLeft') { prev(); }
+      }
+    });
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      measure();
+    });
+
+    // Re-measure when window loads completely (all images rendered)
+    window.addEventListener('load', () => {
+      measure();
+    });
+
+    window.projectsSlider = {
+      next,
+      prev,
+      goToProject,
+      refresh: measure,
+      getActiveIndex: () => currentActiveProjIndex,
+      getCount: () => PROJ_COUNT,
+      isDragged: () => hasDraggedMeaningfully
+    };
   }
 
   renderProjects();
@@ -781,5 +1110,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initSkillsGlobe();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMainApp);
+} else {
+  initMainApp();
+}
 
