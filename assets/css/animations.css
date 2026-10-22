@@ -1,0 +1,544 @@
+/* ==========================================================================
+   AWWWARDS-LEVEL PRODUCTION ANIMATIONS ENGINE STYLES
+   Pastel Lavender Glassmorphism System
+   Technologies: GSAP 3 + ScrollTrigger + Lenis
+   - 60fps animations: Transform & Opacity only
+   - Magnetic button micro-interactions
+   - Sliding active capsule navigation
+   - Ambient moving gradient lighting & floating orbs
+   - Pinned horizontal project showcase
+   - Zero-layout-shift split-text masking
+   - Complete prefers-reduced-motion compliance
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Harmonize Reveal Pop: Eliminate blur artifacts & CSS transition conflicts
+   -------------------------------------------------------------------------- */
+.reveal-pop {
+  filter: none !important;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: opacity, transform;
+}
+
+@media (max-width: 480px) {
+  .hi-hero-title {
+    font-size: clamp(1.8rem, 8.2vw, 2.3rem) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1. Top Scroll Progress Indicator (Hairline Gradient)
+   -------------------------------------------------------------------------- */
+.anim-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #7C3AED, #A855F7 45%, #EC4899 100%);
+  transform-origin: left center;
+  transform: scaleX(0);
+  z-index: 999999;
+  pointer-events: none;
+  box-shadow: 0 1px 8px rgba(168, 85, 247, 0.4);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   2. Ethereal Ambient Orbs (Atmospheric Gradient Lighting)
+   -------------------------------------------------------------------------- */
+.anim-ambient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: -1;
+  will-change: transform;
+}
+
+.anim-ambient-orb.orb-1 {
+  width: 540px;
+  height: 540px;
+  top: 8%;
+  left: 8%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.42) 0%, rgba(244, 114, 182, 0.22) 48%, transparent 70%);
+  animation: orbFloat1 24s ease-in-out infinite alternate;
+}
+
+.anim-ambient-orb.orb-2 {
+  width: 620px;
+  height: 620px;
+  top: 42%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(224, 231, 255, 0.52) 0%, rgba(192, 132, 252, 0.24) 48%, transparent 70%);
+  animation: orbFloat2 28s ease-in-out infinite alternate;
+}
+
+.anim-ambient-orb.orb-3 {
+  width: 520px;
+  height: 520px;
+  top: 76%;
+  left: 12%;
+  background: radial-gradient(circle, rgba(253, 242, 248, 0.6) 0%, rgba(244, 114, 182, 0.26) 48%, transparent 70%);
+  animation: orbFloat3 26s ease-in-out infinite alternate;
+}
+
+@keyframes orbFloat1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(60px, 70px, 0) scale(1.1); }
+  100% { transform: translate3d(-40px, 40px, 0) scale(0.94); }
+}
+
+@keyframes orbFloat2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-70px, -60px, 0) scale(1.08); }
+  100% { transform: translate3d(50px, -30px, 0) scale(0.96); }
+}
+
+@keyframes orbFloat3 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(50px, -60px, 0) scale(1.12); }
+  100% { transform: translate3d(-30px, 35px, 0) scale(0.92); }
+}
+
+/* --------------------------------------------------------------------------
+   3. Sliding Capsule Navigation (Inspired by pszostak.pl)
+   -------------------------------------------------------------------------- */
+.floating-pill-nav {
+  position: relative;
+  overflow: visible;
+}
+
+.nav-sliding-pill {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  border-radius: 9999px;
+  background: #EDE4FF;
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.14);
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  will-change: transform, width;
+  opacity: 0;
+}
+
+.pill-nav-link {
+  position: relative;
+  z-index: 2;
+  transition: color 200ms ease !important;
+}
+
+.pill-nav-link.active {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #7C3AED !important;
+  font-weight: 700 !important;
+}
+
+/* Mobile dropdown animation */
+.floating-pill-nav.open {
+  animation: mobileDropdownSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}
+
+@keyframes mobileDropdownSlide {
+  0% { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   4. Split-Text Masks & Letter Entrances
+   -------------------------------------------------------------------------- */
+.anim-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  margin-right: 0.22em;
+}
+
+.anim-mask:last-child {
+  margin-right: 0;
+}
+
+.anim-word {
+  display: inline-block;
+  transform: translateY(115%);
+  will-change: transform;
+}
+
+/* Character level split for oversized title */
+.anim-char-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.anim-char {
+  display: inline-block;
+  transform: translateY(105%);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   5. Full-Screen Cinematic Preloader
+   -------------------------------------------------------------------------- */
+.anim-preloader {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0D0B14;
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  will-change: clip-path;
+  color: #FFFFFF;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
+  user-select: none;
+}
+
+.anim-preloader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+}
+
+.anim-preloader-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #C084FC;
+  text-transform: uppercase;
+}
+
+.anim-preloader-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #EC4899;
+  box-shadow: 0 0 10px #EC4899;
+  animation: animPulse 1.4s infinite ease-in-out;
+}
+
+@keyframes animPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.anim-preloader-number {
+  font-size: clamp(3.75rem, 9vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-family: var(--font-mono, monospace);
+  background: linear-gradient(135deg, #FFFFFF 20%, #E9D5FF 60%, #F472B6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.anim-preloader-pct {
+  font-size: 0.45em;
+  margin-left: 0.15em;
+  opacity: 0.75;
+}
+
+.anim-preloader-progress-track {
+  width: 220px;
+  max-width: 70vw;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.anim-preloader-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #7C3AED, #A855F7 50%, #EC4899 100%);
+  transform-origin: left;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+.anim-preloader-status {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #94A3B8;
+}
+
+/* --------------------------------------------------------------------------
+   6. Hero Atmosphere & Sticker
+   -------------------------------------------------------------------------- */
+.anim-hero-bg-parallax {
+  position: absolute;
+  inset: -15% -10% -15% -10%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(192, 132, 252, 0.22) 0%, rgba(244, 114, 182, 0.12) 42%, transparent 70%);
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   7. Pinned Horizontal Gallery (Projects Section)
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .anim-horizontal-active {
+    overflow: hidden !important;
+    position: relative;
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  .anim-horizontal-active .container {
+    max-width: 100% !important;
+    padding-left: clamp(2rem, 6vw, 5rem) !important;
+    padding-right: clamp(2rem, 6vw, 5rem) !important;
+  }
+
+  .anim-horizontal-active .projects-2col-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 3rem !important;
+    width: max-content !important;
+    will-change: transform;
+    margin-top: 1.5rem;
+  }
+
+  .anim-horizontal-active .showcase-project-card {
+    flex: 0 0 clamp(480px, 48vw, 640px) !important;
+    width: clamp(480px, 48vw, 640px) !important;
+    max-width: 85vw !important;
+  }
+}
+
+/* Card hover scaling and 3D depth elevation */
+@media (prefers-reduced-motion: no-preference) {
+  .showcase-project-card {
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform;
+  }
+
+  .showcase-project-card:hover {
+    transform: translateY(-8px) scale(1.03) !important;
+    z-index: 35 !important;
+  }
+
+  .showcase-project-card:hover .project-colored-frame {
+    box-shadow: 0 24px 50px -10px rgba(124, 58, 237, 0.25) !important;
+  }
+
+  .showcase-project-card:hover .mockup-screenshot {
+    transform: scale(1.05) !important;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Premium Magnetic Buttons & Micro-Interactions
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .anim-magnetic {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    will-change: transform;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  /* Moving arrow effect on hover */
+  .anim-magnetic:hover svg,
+  .anim-magnetic:hover .btn-icon,
+  .nav-action-pill:hover svg,
+  .project-gradient-btn:hover svg,
+  .resume-download-cta:hover svg,
+  .form-submit-cta:hover svg {
+    transform: translate3d(3px, -3px, 0) scale(1.1);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* Springy active press feedback */
+.anim-magnetic:active,
+.pill-nav-link:active,
+.mobile-menu-btn:active,
+button:active {
+  transform: scale(0.94) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Custom Cursor with Difference Blend Mode
+   -------------------------------------------------------------------------- */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .anim-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    z-index: 99999999;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  .anim-cursor.is-active {
+    opacity: 1;
+  }
+
+  .anim-cursor.is-hovered {
+    transform: translate(-50%, -50%) scale(2.8);
+    background-color: #FFFFFF;
+  }
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .anim-cursor {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Page Transition Overlay
+   -------------------------------------------------------------------------- */
+.anim-page-transition {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #2E1065 0%, #0F0E17 100%);
+  z-index: 9999998;
+  pointer-events: none;
+  clip-path: circle(0% at 50% 50%);
+  will-change: clip-path;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Precision Fitting (< 768px and < 480px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .nav-bar-inner {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+  .nav-action-pill {
+    margin-left: auto !important;
+    padding: 0 14px !important;
+    height: 46px !important;
+  }
+  .nav-circle-btn {
+    width: 46px !important;
+    height: 46px !important;
+    flex-shrink: 0 !important;
+  }
+  .mobile-menu-btn {
+    width: 46px !important;
+    height: 46px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-wrapper {
+    padding: 0 0.75rem !important;
+  }
+  .nav-action-pill {
+    padding: 0 10px !important;
+    height: 42px !important;
+  }
+  .nav-action-pill span {
+    font-size: 0.75rem !important;
+  }
+  .nav-circle-btn {
+    width: 42px !important;
+    height: 42px !important;
+  }
+  .mobile-menu-btn {
+    width: 42px !important;
+    height: 42px !important;
+  }
+  .hi-hero-title {
+    font-size: 1.55rem !important;
+    line-height: 1.25 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.2em !important;
+  }
+  .anim-mask {
+    margin-right: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Prefers-Reduced-Motion Strict Fallback
+   Site must look 100% IDENTICAL to the original layout with no shifts.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .anim-mask,
+  .anim-char-mask {
+    display: inline !important;
+    overflow: visible !important;
+    margin-right: 0 !important;
+  }
+
+  .anim-word,
+  .anim-char {
+    display: inline !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .anim-preloader,
+  .anim-page-transition,
+  .anim-cursor,
+  .anim-scroll-progress,
+  .nav-sliding-pill,
+  .anim-ambient-orb {
+    display: none !important;
+  }
+
+  .anim-horizontal-active {
+    overflow: visible !important;
+  }
+
+  .anim-horizontal-active .projects-2col-grid {
+    display: grid !important;
+    transform: none !important;
+  }
+}
