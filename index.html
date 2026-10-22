@@ -33,10 +33,9 @@
   <script>
     (function () {
       try {
-        if (
-          sessionStorage.getItem('portfolio_welcome_intro_seen') === 'true' ||
-          (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-        ) {
+        var params = new URLSearchParams(window.location.search);
+        var forceIntro = params.get('intro') === '1' || params.has('intro');
+        if (!forceIntro && sessionStorage.getItem('portfolio_welcome_intro_seen') === 'true') {
           var el = document.getElementById('animPreloader');
           if (el) el.style.display = 'none';
         }
