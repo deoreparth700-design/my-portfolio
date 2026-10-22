@@ -334,28 +334,7 @@
    7. Projects Showcase: Natural vertical scrolling with 2-column grid
    -------------------------------------------------------------------------- */
 
-/* Card hover scaling and 3D depth elevation */
-@media (prefers-reduced-motion: no-preference) {
-  .showcase-project-card {
-    position: relative;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    will-change: transform;
-  }
-
-  .showcase-project-card:hover {
-    transform: translateY(-8px) scale(1.03) !important;
-    z-index: 35 !important;
-  }
-
-  .showcase-project-card:hover .project-colored-frame {
-    box-shadow: 0 24px 50px -10px rgba(124, 58, 237, 0.25) !important;
-  }
-
-  .showcase-project-card:hover .mockup-screenshot {
-    transform: scale(1.05) !important;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  }
-}
+/* Projects Showcase transitions are managed exclusively by style.css and main.js */
 
 /* --------------------------------------------------------------------------
    8. Premium Magnetic Buttons & Micro-Interactions

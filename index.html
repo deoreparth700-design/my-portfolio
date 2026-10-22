@@ -18,10 +18,10 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Custom Stylesheet (Pastel Lavender Glassmorphism) -->
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=3.6">
 
   <!-- Production Animations Stylesheet (GSAP 3 + Lenis) -->
-  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/animations.css?v=3.6">
 </head>
 <body>
   <!-- Welcome Intro Overlay (Single Centered Multilingual Greeting) -->
@@ -307,7 +307,7 @@
          FEATURED PROJECTS SECTION (Screenshot 39 — 2-Column Colored Containers)
          ========================================================================== -->
     <section class="projects-showcase-section" id="projects">
-      <div class="container">
+      <div class="container projects-header-container">
         <div class="section-header-center reveal-pop">
           <span class="section-tag-pill">PORTFOLIO</span>
           <h2 class="section-main-title">
@@ -317,9 +317,44 @@
             A curated selection of projects that made me confident in building software.
           </p>
         </div>
+      </div>
 
-        <!-- Rendered dynamically by assets/js/main.js matching Screenshot 39 -->
-        <div class="projects-2col-grid" id="projectsGrid"></div>
+      <!-- Sliding Window Stage (Horizontal Showcase) -->
+      <div class="projects-slider-window" id="projectsSliderWindow" aria-label="Projects Sliding Showcase">
+        <div class="slider-edge-vignette left" aria-hidden="true"></div>
+        <div class="slider-edge-vignette right" aria-hidden="true"></div>
+
+        <!-- Floating Side Arrows for effortless forward/backward clicking -->
+        <button type="button" class="slider-side-arrow-btn side-prev anim-magnetic" id="projectsSidePrevBtn" aria-label="Scroll backward">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="projects-slider-track" id="projectsGrid"></div>
+
+        <button type="button" class="slider-side-arrow-btn side-next anim-magnetic" id="projectsSideNextBtn" aria-label="Scroll forward">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Sliding Window Controls (Pill Navigation & Dots) -->
+      <div class="projects-slider-controls">
+        <button type="button" class="slider-nav-btn prev-btn anim-magnetic" id="projectsPrevBtn" aria-label="Previous project">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="slider-pagination-dots" id="projectsDots" role="tablist" aria-label="Project slide navigation"></div>
+
+        <button type="button" class="slider-nav-btn next-btn anim-magnetic" id="projectsNextBtn" aria-label="Next project">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -614,7 +649,7 @@
   <div class="toast-toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- Client Engine -->
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/main.js?v=3.6"></script>
 
   <!-- GSAP 3 + ScrollTrigger + Lenis Engine -->
   <script src="assets/js/vendor/gsap.min.js"></script>
@@ -622,6 +657,6 @@
   <script src="assets/js/vendor/lenis.min.js"></script>
 
   <!-- Production Animations Engine -->
-  <script src="assets/js/animations.js"></script>
+  <script src="assets/js/animations.js?v=3.6"></script>
 </body>
 </html>
