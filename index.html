@@ -24,6 +24,26 @@
   <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
+  <!-- Welcome Intro Overlay (Single Centered Multilingual Greeting) -->
+  <div class="anim-preloader" id="animPreloader" aria-live="polite" aria-atomic="true">
+    <div class="welcome-greeting-stage">
+      <span class="welcome-greeting" id="welcomeGreeting" dir="auto">Hello</span>
+    </div>
+  </div>
+  <script>
+    (function () {
+      try {
+        if (
+          sessionStorage.getItem('portfolio_welcome_intro_seen') === 'true' ||
+          (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+        ) {
+          var el = document.getElementById('animPreloader');
+          if (el) el.style.display = 'none';
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Top Scroll Progress Indicator -->
   <div class="anim-scroll-progress" id="animScrollProgress" aria-hidden="true"></div>
 
