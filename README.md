@@ -20,13 +20,15 @@ The portfolio features a space-inspired visual design with responsive layouts, a
 - Resume access
 - GitHub and LinkedIn integration
 - Email contact
-- Interactive contact/message section
+- Contact form that opens your email app with the message pre-filled (no backend; nothing is stored)
 
 ## 🛠️ Technologies
 
 - HTML5
 - CSS3
-- JavaScript
+- JavaScript (vanilla, no build step)
+- GSAP + ScrollTrigger (scroll animations)
+- Lenis (smooth scrolling)
 - Google Fonts
 - CSS Animations
 - Responsive Web Design
@@ -37,6 +39,12 @@ The portfolio features a space-inspired visual design with responsive layouts, a
 my-portfolio/
 │
 ├── assets/
+│   ├── css/            # style.css, animations.css
+│   ├── js/             # main.js, animations.js, vendor/ (GSAP, ScrollTrigger, Lenis)
+│   ├── screenshots/    # project preview images used by the Projects section
+│   ├── profile_picture.jpeg
+│   └── sticker.png
 ├── index.html
 ├── resume.pdf
 └── README.md
+```
