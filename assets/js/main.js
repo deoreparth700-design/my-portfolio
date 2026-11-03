@@ -24,7 +24,7 @@ function initMainApp() {
       tags: ['Python', 'FastAPI', 'PostgreSQL', 'JWT', 'Razorpay', 'SQLAlchemy'],
       github: 'https://github.com/deoreparth700-design/Cart-API',
       live: 'https://cart-api-m4g4.onrender.com/static/index.html',
-      image: 'assets/screenshots/cart-api-cart.png',
+      image: 'assets/screenshots/cartapi-storefront.png',
       alt: 'Cart API live storefront web application with active product catalog and Razorpay checkout'
     },
     {
