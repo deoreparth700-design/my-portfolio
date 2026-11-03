@@ -1,47 +1,55 @@
 # Parth Deore — Personal Portfolio
 
-A modern, interactive personal portfolio website showcasing my projects, technical skills, certifications, and software development journey.
+A modern, interactive personal portfolio website showcasing my backend projects, technical skills, certifications, and software development journey.
 
-The portfolio features a space-inspired visual design with responsive layouts, animations, interactive sections, and functional contact/resume links.
+The portfolio features a space-inspired visual design with responsive layouts, animations, interactive project showcases, and functional contact/resume links.
 
 ## 🌐 Live Portfolio
 
-### [Visit My Portfolio](https://parthdeore.vercel.app/)
+**Live URL:** [https://parthdeore.vercel.app/](https://parthdeore.vercel.app/)
+
+## 💻 Running Locally
+
+This is a static HTML/CSS/JavaScript project with no build steps or dependencies required.
+
+### Option 1: Python HTTP Server (Recommended)
+```bash
+# From the repository root
+python -m http.server 8000
+```
+Then visit [http://localhost:8000](http://localhost:8000) in your web browser.
+
+### Option 2: Direct File Open
+Double-click `index.html` or open it directly in any modern web browser.
 
 ## 📌 Highlights
 
-- Responsive portfolio website
-- Space-inspired interactive UI
-- Animated backgrounds and transitions
-- About / Profile section
-- Technical skills and tools
-- Featured projects
+- Responsive portfolio website with desktop and mobile support
+- Space-inspired interactive UI with 3D skills sphere and project carousel
+- About / Profile section with education and background
+- Featured backend projects with live demos and repository links
 - Certifications and learning journey
-- Resume access
+- Resume access (PDF download)
 - GitHub and LinkedIn integration
-- Email contact
-- Contact form that opens your email app with the message pre-filled (no backend; nothing is stored)
+- Direct email contact and pre-filled mailto form
 
 ## 🛠️ Technologies
 
 - HTML5
-- CSS3
-- JavaScript (vanilla, no build step)
-- GSAP + ScrollTrigger (scroll animations)
+- CSS3 (responsive design, custom variables, animations)
+- JavaScript (vanilla ES6+, no build step)
+- GSAP + ScrollTrigger (scroll-linked animations)
 - Lenis (smooth scrolling)
-- Google Fonts
-- CSS Animations
-- Responsive Web Design
+- Google Fonts (Plus Jakarta Sans, JetBrains Mono)
 
 ## 📂 Project Structure
 
 ```text
 my-portfolio/
-│
 ├── assets/
 │   ├── css/            # style.css, animations.css
 │   ├── js/             # main.js, animations.js, vendor/ (GSAP, ScrollTrigger, Lenis)
-│   ├── screenshots/    # project preview images used by the Projects section
+│   ├── screenshots/    # project preview images used by the projects carousel
 │   ├── profile_picture.jpeg
 │   └── sticker.png
 ├── index.html
