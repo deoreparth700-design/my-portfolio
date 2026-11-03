@@ -74,7 +74,7 @@ function initMainApp() {
       colorClass: 'frame-teal',
       leadDesc: 'MGM University final year examination platform ensuring data integrity and tamper-evidence through cryptographic blockchain verification and automated evaluation.',
       tags: ['Python', 'Flask', 'PostgreSQL', 'Blockchain', 'Vercel'],
-      github: 'https://github.com/deoreparth700-design/Blockchain-Based-Secure-Online-Examination-System',
+      github: 'https://github.com/deoreparth700-design/hash-chained-exam-system',
       live: 'https://blockchain-based-secure-online-exam.vercel.app/',
       image: 'assets/screenshots/blockchain-exam.png',
       alt: 'MGM University blockchain-based examination system portal'
