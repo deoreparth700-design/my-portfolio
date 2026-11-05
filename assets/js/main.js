@@ -63,7 +63,7 @@ function initMainApp() {
       tags: ['Python', 'FastAPI', 'PostgreSQL', 'Redis', 'Pytest', 'Render'],
       github: 'https://github.com/deoreparth700-design/blog-platform-api',
       live: 'https://blog-platform-api-db7a.onrender.com/app',
-      image: 'assets/screenshots/blog-platform-api.jpg',
+      image: 'assets/screenshots/blog-platform-api.png',
       alt: 'Blog Platform API live article feed web interface'
     },
     {
